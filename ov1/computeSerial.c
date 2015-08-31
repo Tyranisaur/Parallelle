@@ -39,7 +39,6 @@ start is 2 or greater, and end is greater than start.\n");
 
 	//Print the global sum once only
 	printf("The sum is: %f\n", sum);
-
 	return 0;
 }
 

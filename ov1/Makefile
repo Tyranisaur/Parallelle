@@ -7,6 +7,8 @@ PROCESSES:=
 serial: computeSerial.c
 	gcc -o $@ computeSerial.c -std=c99 -lm -O2
 
+all: serial
+
 run_serial: serial
 	./serial $(START) $(STOP)
 
