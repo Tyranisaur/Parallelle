@@ -45,7 +45,8 @@ start is 2 or greater, and end is greater than start.\n");
 
 	// Perform the computation
 	double sum = 0.0;
-	for (double i = begin; i < end ; i++) {
+	double i;
+	for (i = begin; i < end ; i++) {
 		sum += 1.0/log(i);
 	}
 
@@ -56,8 +57,8 @@ start is 2 or greater, and end is greater than start.\n");
 	if (rank == 0)
 	{
 		double* buf;
-
-		for (int i = 1; i < size; i++)
+		int i;
+		for (i = 1; i < size; i++)
 		{
 			MPI_Recv(buf, 1, MPI_DOUBLE, i, MPI_ANY_TAG, MPI_COMM_WORLD, MPI_STATUS_IGNORE);
 			sum += *buf;
