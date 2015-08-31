@@ -7,11 +7,11 @@ PROCESSES:=
 serial: computeSerial.c
 	gcc -o $@ computeSerial.c -std=c99 -lm -O2
 
-better: computeMPI.c
+parallel: computeMPI.c
 	gcc -o $@ computeMPI.c -std=c99 -lm -O2
  
-all: better
-	./serial $(START) $(STOP)
+all: parallel
+	./parallel $(START) $(STOP)
 
 run_serial: serial
 	./serial $(START) $(STOP)
