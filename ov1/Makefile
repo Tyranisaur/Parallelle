@@ -6,12 +6,10 @@ PROCESSES:=
 
 serial: computeSerial.c
 	gcc -o $@ computeSerial.c -std=c99 -lm -O2
-
-parallel.o: computeMPI.c
-	mpicc -std=c99 -o parallel computeMPI.c 
+	
  
-all: parallel
-	./parallel $(START) $(STOP)
+all: computeMPI.c
+	mpicc -std=c99 -o parallel computeMPI.c 
 
 run_serial: serial
 	./serial $(START) $(STOP)
