@@ -7,8 +7,8 @@ PROCESSES:=
 serial: computeSerial.c
 	gcc -o $@ computeSerial.c -std=c99 -lm -O2
 
-parallel: computeMPI.c
-	mpicc -o -std=c99 parallel computeMPI.c 
+parallel.o: computeMPI.c
+	mpicc -std=c99 -o parallel computeMPI.c 
  
 all: parallel
 	./parallel $(START) $(STOP)
