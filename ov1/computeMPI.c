@@ -39,14 +39,11 @@ start is 2 or greater, and end is greater than start.\n");
 	MPI_Comm_size(MPI_COMM_WORLD, &size);
 
 	// TODO: Compute the local range, so that all the elements are accounted for.
-	double chunkSize = (double)(stop - start)/size;
-	double begin = start + rank *chunkSize;
-	double end = begin + chunkSize;
 
 	// Perform the computation
 	double sum = 0.0;
-	double i;
-	for (i = begin; i < end ; i++) {
+	int i;
+	for (i = start + rank; i < stop ; i += size) {
 		sum += 1.0/log(i);
 	}
 
@@ -60,16 +57,16 @@ start is 2 or greater, and end is greater than start.\n");
 		int i;
 		for (i = 1; i < size; i++)
 		{
-			MPI_Recv(buf, 1, MPI_DOUBLE, i, MPI_ANY_TAG, MPI_COMM_WORLD, MPI_STATUS_IGNORE);
+			MPI_Recv(buf, 1, MPI_DOUBLE, i, 0, MPI_COMM_WORLD, MPI_STATUS_IGNORE);
 			sum += *buf;
 		}
 
 		// TODO: Print the global sum once only
-		printf("The sum is: %f\n", sum);
+		printf("%f\n", sum);
 	}
 	else
 	{
-		MPI_Send(&sum, 1, MPI_INT, 0, MPI_ANY_TAG, MPI_COMM_WORLD);
+		MPI_Send(&sum, 1, MPI_INT, 0, 0, MPI_COMM_WORLD);
 	}
 
 	MPI_Finalize();
