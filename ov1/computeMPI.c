@@ -21,7 +21,6 @@ int main(int argc, char **argv) {
 	int rank, size;
 	MPI_Comm_rank(MPI_COMM_WORLD, &rank);
 	MPI_Comm_size(MPI_COMM_WORLD, &size);
-
 	if (argc < 3) {
 		printf("This program requires two parameters:\n \
 the start and end specifying a range of positive integers in which \
@@ -55,19 +54,20 @@ start is 2 or greater, and end is greater than start.\n");
 	if (rank == 0)
 	{
 		MPI_Status status;
-		double* buf;
+		double buf;
 		for (int i = 1; i < size; i++)
 		{
-			MPI_Recv(buf, 1, MPI_DOUBLE, MPI_ANY_SOURCE, 1, MPI_COMM_WORLD, &status);
-			sum += *buf;
+			MPI_Recv(&buf, 1, MPI_DOUBLE, i, 1, MPI_COMM_WORLD, &status);
+			sum += buf;
 		}
 
 		// TODO: Print the global sum once only
 		printf("%f\n", sum);
 	}
+	
 	else
 	{
-		MPI_Ssend(&sum, 1, MPI_INT, 0, 1, MPI_COMM_WORLD);
+		MPI_Ssend(&sum, 1, MPI_DOUBLE, 0, 1, MPI_COMM_WORLD);
 	}
 
 	MPI_Finalize();

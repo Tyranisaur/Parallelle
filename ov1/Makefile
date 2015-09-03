@@ -9,7 +9,7 @@ serial: computeSerial.c
 	
  
 all: computeMPI.c
-	mpicc -std=c99 -o parallel computeMPI.c 
+	mpicc -std=c99 -o parallel computeMPI.c -lm -O2
 
 run_serial: serial
 	./serial $(START) $(STOP)
