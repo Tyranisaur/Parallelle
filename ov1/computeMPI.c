@@ -16,12 +16,17 @@
 */
 
 int main(int argc, char **argv) {
+
+	MPI_Init(&argc, &argv);
 	int rank, size;
+	MPI_Comm_rank(MPI_COMM_WORLD, &rank);
+	MPI_Comm_size(MPI_COMM_WORLD, &size);
 
 	if (argc < 3) {
 		printf("This program requires two parameters:\n \
 the start and end specifying a range of positive integers in which \
 start is 2 or greater, and end is greater than start.\n");
+		return 0;
 		exit(1);
 	}
 
@@ -31,19 +36,15 @@ start is 2 or greater, and end is greater than start.\n");
 
 	if(start < 2 || stop <= start){
 		printf("Start must be greater than 2 and the end must be larger than start.\n");
+		return 0;
 		exit(1);
 	}
-
-	MPI_Init(&argc, &argv);
-	MPI_Comm_rank(MPI_COMM_WORLD, &rank);
-	MPI_Comm_size(MPI_COMM_WORLD, &size);
 
 	// TODO: Compute the local range, so that all the elements are accounted for.
 
 	// Perform the computation
 	double sum = 0.0;
-	int i;
-	for (i = start + rank; i < stop ; i += size) {
+	for (int i = start + rank; i < stop ; i += size) {
 		sum += 1.0/log(i);
 	}
 
@@ -53,11 +54,11 @@ start is 2 or greater, and end is greater than start.\n");
 	// Use MPI_Send and MPI_Recv here
 	if (rank == 0)
 	{
+		MPI_Status status;
 		double* buf;
-		int i;
-		for (i = 1; i < size; i++)
+		for (int i = 1; i < size; i++)
 		{
-			MPI_Recv(buf, 1, MPI_DOUBLE, i, 0, MPI_COMM_WORLD, MPI_STATUS_IGNORE);
+			MPI_Recv(buf, 1, MPI_DOUBLE, MPI_ANY_SOURCE, 1, MPI_COMM_WORLD, &status);
 			sum += *buf;
 		}
 
@@ -66,7 +67,7 @@ start is 2 or greater, and end is greater than start.\n");
 	}
 	else
 	{
-		MPI_Send(&sum, 1, MPI_INT, 0, 0, MPI_COMM_WORLD);
+		MPI_Send(&sum, 1, MPI_INT, 0, 1, MPI_COMM_WORLD);
 	}
 
 	MPI_Finalize();
