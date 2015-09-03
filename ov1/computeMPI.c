@@ -67,7 +67,7 @@ start is 2 or greater, and end is greater than start.\n");
 	}
 	else
 	{
-		MPI_Send(&sum, 1, MPI_INT, 0, 1, MPI_COMM_WORLD);
+		MPI_Ssend(&sum, 1, MPI_INT, 0, 1, MPI_COMM_WORLD);
 	}
 
 	MPI_Finalize();
