@@ -11,6 +11,7 @@
 #PBS -l select=2:ncpus=32:mpiprocs=16
 #PBS -l walltime=00:04:00
 
+cp $parallel $PBS_O_WORKDIR
 cd $ { PBS_O_WORKDIR }
 module load mpt/2.11
 module load intelcomp/15.0.1
