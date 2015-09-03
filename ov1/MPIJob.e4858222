@@ -1,0 +1,9 @@
+/var/spool/PBS/mom_priv/jobs/4858222.service2.SC: line 15: cd: $: No such file or directory
+MPT: Launch error on r10i4n15.vilje.hpc.ntnu.no
+/usr/pbs/default/bin/pbs_attach: invalid option -- 'n'
+cannot specify pid and command
+usage: /usr/pbs/default/bin/pbs_attach [-j jobid] [-m port] -p pid
+usage: /usr/pbs/default/bin/pbs_attach [-j jobid] [-m port] [-P] [-s] cmd [arg1 ...]
+usage: /usr/pbs/default/bin/pbs_attach --version
+MPT ERROR: could not run executable
+/opt/pbs/default/bin/mpiexec: line 531:  4586 Killed                  mpirun -f $runfile
