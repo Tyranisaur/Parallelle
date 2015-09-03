@@ -1,0 +1,7 @@
+cp: missing destination file operand after `/home/ntnu/torgeiws/bin/Parallelle/ov1'
+Try `cp --help' for more information.
+/var/spool/PBS/mom_priv/jobs/4857947.service2.SC: line 15: cd: $: No such file or directory
+/bin/sh: /home/ntnu/torgeiws/pbs.4857947.service2.x8z/parallel: No such file or directory
+/bin/sh: line 0: exec: /home/ntnu/torgeiws/pbs.4857947.service2.x8z/parallel: cannot execute: No such file or directory
+MPT ERROR: could not run executable
+/var/spool/PBS/mom_priv/jobs/4857947.service2.SC: line 18: 22273 Killed                  mpirun -np 32 ./parallel 2 10000000
