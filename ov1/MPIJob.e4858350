@@ -1,0 +1,5 @@
+/var/spool/PBS/mom_priv/jobs/4858350.service2.SC: line 15: cd: $: No such file or directory
+MPT: Launch error on r10i4n10.vilje.hpc.ntnu.no
+./parallel: No such file or directory
+MPT ERROR: could not run executable
+/opt/pbs/default/bin/mpiexec: line 531:  3824 Killed                  mpirun -f $runfile
