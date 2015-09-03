@@ -1,0 +1,5 @@
+/var/spool/PBS/mom_priv/jobs/4857812.service2.SC: line 14: cd: $: No such file or directory
+/bin/sh: /home/ntnu/torgeiws/pbs.4857812.service2.x8z/parallel: No such file or directory
+/bin/sh: line 0: exec: /home/ntnu/torgeiws/pbs.4857812.service2.x8z/parallel: cannot execute: No such file or directory
+MPT ERROR: could not run executable
+/var/spool/PBS/mom_priv/jobs/4857812.service2.SC: line 17: 16107 Killed                  mpirun -np 32 ./parallel 2 10000000
