@@ -15,4 +15,4 @@
 cd $ { PBS_O_WORKDIR }
 module load mpt/2.11
 module load intelcomp/15.0.1
-mpiexec -np 32 ./parallel 2 10000000
+mpiexec -n 32 ./parallel 2 10000000
