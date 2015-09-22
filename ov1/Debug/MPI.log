@@ -1,0 +1,13 @@
+﻿Build started 03.09.2015 14.32.40.
+     1>Project "C:\Users\Torgeir\Documents\GitHub\Parallelle\ov1\MPI.vcxproj" on node 2 (Build target(s)).
+     1>ClCompile:
+         C:\Program Files (x86)\Microsoft Visual Studio 14.0\VC\bin\CL.exe /c /I"C:\Program Files (x86)\Microsoft Visual Studio 14.0\Common7\IDE\CommonExtensions\Microsoft\TeamFoundation\Team Explorer\NativeBinaries\x86" /I"C:\Program Files\Microsoft MPI\Bin\\" /IC:\ProgramData\Oracle\Java\javapath /IC:\WINDOWS\system32 /IC:\WINDOWS /IC:\WINDOWS\System32\Wbem /IC:\WINDOWS\System32\WindowsPowerShell\v1.0\ /IC:\WINDOWS\system32\config\systemprofile\.dnx\bin /I"C:\Program Files\Microsoft DNX\Dnvm\\" /I"C:\Program Files (x86)\Windows Kits\8.1\Windows Performance Toolkit\\" /I"C:\Program Files (x86)\Microsoft SDKs\MPI\Include" /IC:\MinGW\bin /IC:\MinGW\msys\1.0\bin /I"C:\Program Files\Microsoft MPI\Inc" /Zi /nologo /W3 /WX- /Od /Oy- /D WIN32 /D _DEBUG /D _CONSOLE /Gm /EHsc /RTC1 /MDd /GS /fp:precise /Zc:wchar_t /Zc:forScope /Zc:inline /Fo"Debug\\" /Fd"Debug\vc140.pdb" /Gd /TC /analyze- /errorReport:prompt computeMPI.c
+         computeMPI.c
+       Link:
+         C:\Program Files (x86)\Microsoft Visual Studio 14.0\VC\bin\link.exe /ERRORREPORT:PROMPT /OUT:"C:\Users\Torgeir\Documents\GitHub\Parallelle\ov1\Debug\MPI.exe" /INCREMENTAL /NOLOGO "C:\Program Files\Microsoft MPI\Lib\i386\msmpi.lib" kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib odbc32.lib odbccp32.lib /MANIFEST /MANIFESTUAC:"level='asInvoker' uiAccess='false'" /manifest:embed /Debug /PDB:"C:\Users\Torgeir\Documents\GitHub\Parallelle\ov1\Debug\MPI.pdb" /SUBSYSTEM:CONSOLE /TLBID:1 /DYNAMICBASE /NXCOMPAT /IMPLIB:"C:\Users\Torgeir\Documents\GitHub\Parallelle\ov1\Debug\MPI.lib" /MACHINE:X86 Debug\computeMPI.obj
+         MPI.vcxproj -> C:\Users\Torgeir\Documents\GitHub\Parallelle\ov1\Debug\MPI.exe
+     1>Done Building Project "C:\Users\Torgeir\Documents\GitHub\Parallelle\ov1\MPI.vcxproj" (Build target(s)).
+
+Build succeeded.
+
+Time Elapsed 00:00:00.67
