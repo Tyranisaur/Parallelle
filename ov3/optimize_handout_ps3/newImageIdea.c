@@ -43,11 +43,9 @@ void performNewIdeaIteration(AccurateImage *imageOut, AccurateImage *imageIn, in
 	int inOffset, outOffset;
 	double sumR, sumG, sumB;
 	int countIncluded;
-	int calls;
 	//Do all five iterations inside function
 	for(int i = 0; i < 5; i++)
 	{
-		calls = 0;
 		outOffset = 0;
 		// Iterate over each pixel
 		for(int senterY = 0; senterY < height; senterY++)
@@ -85,7 +83,6 @@ void performNewIdeaIteration(AccurateImage *imageOut, AccurateImage *imageIn, in
 						sumR += imageIn->data[inOffset].red;
 						sumG += imageIn->data[inOffset].green;
 						sumB += imageIn->data[inOffset].blue;
-						calls++;
 
 						// Keep track of how many values we have included
 						countIncluded++;
@@ -102,7 +99,6 @@ void performNewIdeaIteration(AccurateImage *imageOut, AccurateImage *imageIn, in
 			}
 
 		}
-		printf("sum called %d times\n", calls);
 		//Do trickery with argument variables
 		temp = imageIn;
 		imageIn = imageOut;
