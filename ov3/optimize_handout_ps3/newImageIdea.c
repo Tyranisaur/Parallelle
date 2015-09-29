@@ -43,9 +43,11 @@ void performNewIdeaIteration(AccurateImage *imageOut, AccurateImage *imageIn, in
 	int inOffset, outOffset;
 	double sumR, sumG, sumB;
 	int countIncluded;
+	int calls;
 	//Do all five iterations inside function
 	for(int i = 0; i < 5; i++)
 	{
+		calls = 0;
 		outOffset = 0;
 		// Iterate over each pixel
 		for(int senterY = 0; senterY < height; senterY++)
@@ -83,6 +85,7 @@ void performNewIdeaIteration(AccurateImage *imageOut, AccurateImage *imageIn, in
 						sumR += imageIn->data[inOffset].red;
 						sumG += imageIn->data[inOffset].green;
 						sumB += imageIn->data[inOffset].blue;
+						calls++;
 
 						// Keep track of how many values we have included
 						countIncluded++;
@@ -99,6 +102,7 @@ void performNewIdeaIteration(AccurateImage *imageOut, AccurateImage *imageIn, in
 			}
 
 		}
+		printf("sum called %d times\n", calls);
 		//Do trickery with argument variables
 		temp = imageIn;
 		imageIn = imageOut;
@@ -178,49 +182,50 @@ int main(int argc, char** argv) {
 	} else {
 		image = readStreamPPM(stdin);
 	}
-	AccurateImage *imageAccurate1_tiny = convertImageToNewFormat(image);
-	AccurateImage *imageAccurate2_tiny = convertImageToNewFormat(image);
-
 	// Process the tiny case:
 	int size = 2;
+	//Allocate memory
+	AccurateImage *imageAccurate1_tiny = convertImageToNewFormat(image);
+	AccurateImage *imageAccurate2_tiny = convertImageToNewFormat(image);
+	//Do the computation
 	performNewIdeaIteration(imageAccurate2_tiny, imageAccurate1_tiny, size);
+	//Free memory no longer in use
 	free(imageAccurate1_tiny->data);
 	free(imageAccurate1_tiny);
 
-	AccurateImage *imageAccurate1_small = convertImageToNewFormat(image);
-	AccurateImage *imageAccurate2_small = convertImageToNewFormat(image);
-
 	// Process the small case:
 	size = 3;
+	AccurateImage *imageAccurate1_small = convertImageToNewFormat(image);
+	AccurateImage *imageAccurate2_small = convertImageToNewFormat(image);
 	performNewIdeaIteration(imageAccurate2_small, imageAccurate1_small, size);
 	free(imageAccurate1_small->data);
 	free(imageAccurate1_small);
-
-	AccurateImage *imageAccurate1_medium = convertImageToNewFormat(image);
-	AccurateImage *imageAccurate2_medium = convertImageToNewFormat(image);
+	//Finalize small case
+	PPMImage *final_tiny = performNewIdeaFinalization(imageAccurate2_tiny,  imageAccurate2_small);
+	//This is when tiny data is no longer in use
+	free(imageAccurate2_tiny->data);
+	free(imageAccurate2_tiny);
 
 	// Process the medium case:
 	size = 5;
+	AccurateImage *imageAccurate1_medium = convertImageToNewFormat(image);
+	AccurateImage *imageAccurate2_medium = convertImageToNewFormat(image);
 	performNewIdeaIteration(imageAccurate2_medium, imageAccurate1_medium, size);
 	free(imageAccurate1_medium->data);
 	free(imageAccurate1_medium);
-
-	AccurateImage *imageAccurate1_large = convertImageToNewFormat(image);
-	AccurateImage *imageAccurate2_large = convertImageToNewFormat(image);
-
-	// Do each color channel ??
-	size = 8;
-	performNewIdeaIteration(imageAccurate2_large, imageAccurate1_large, size);
-	free(imageAccurate1_large->data);
-	free(imageAccurate1_large);
-
-	// Save the images.
-	PPMImage *final_tiny = performNewIdeaFinalization(imageAccurate2_tiny,  imageAccurate2_small);
-	free(imageAccurate2_tiny->data);
-	free(imageAccurate2_tiny);
 	PPMImage *final_small = performNewIdeaFinalization(imageAccurate2_small,  imageAccurate2_medium);
 	free(imageAccurate2_small->data);
 	free(imageAccurate2_small);
+
+	//Process the large case:
+	size = 8;
+	AccurateImage *imageAccurate1_large = convertImageToNewFormat(image);
+	AccurateImage *imageAccurate2_large = convertImageToNewFormat(image);
+	free(image->data);
+	free(image);
+	performNewIdeaIteration(imageAccurate2_large, imageAccurate1_large, size);
+	free(imageAccurate1_large->data);
+	free(imageAccurate1_large);
 	PPMImage *final_medium = performNewIdeaFinalization(imageAccurate2_medium,  imageAccurate2_large);
 	free(imageAccurate2_medium->data);
 	free(imageAccurate2_medium);
