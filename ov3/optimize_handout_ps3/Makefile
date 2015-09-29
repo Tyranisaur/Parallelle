@@ -1,4 +1,4 @@
-.PHONY: clean all check run_reference run
+.PHONY: clean all check run_reference run debug
 
 all: newImageIdea newImageIdeaReference
 
@@ -12,6 +12,9 @@ newImageIdeaReference: newImageIdeaReference.c ppm.c
 checker: checker.c ppm.c
 	gcc -O2 --std=c99 -o $@ $^
 
+debug: newImageIdea.c ppm.c
+	gcc -O0 --std=c99 -g -o newImageIdea $^ -lm
+	
 check: checker flower_tiny_correct.ppm flower_small_correct.ppm flower_medium_correct.ppm
 	./checker
 
