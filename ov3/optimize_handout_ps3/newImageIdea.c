@@ -259,12 +259,12 @@ int main(int argc, char** argv) {
 	else
 		writeStreamPPM(stdout, final_medium);
 
-	free(imageAccurate2_medium->data);
-	free(imageAccurate2_medium);
-	free(imageAccurate2_large->data);
-	free(imageAccurate2_large);
-	free(final_medium->data);
-	free(final_medium);
+//	free(imageAccurate2_medium->data);
+//	free(imageAccurate2_medium);
+//	free(imageAccurate2_large->data);
+//	free(imageAccurate2_large);
+//	free(final_medium->data);
+//	free(final_medium);
 
 	return 0;
 }
