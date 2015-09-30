@@ -180,67 +180,89 @@ int main(int argc, char** argv) {
 	}
 	// Process the tiny case:
 	int size = 2;
-	//Allocate memory
+
 	AccurateImage *imageAccurate1_tiny = convertImageToNewFormat(image);
 	AccurateImage *imageAccurate2_tiny = convertImageToNewFormat(image);
-	//Do the computation
+
 	performNewIdeaIteration(imageAccurate2_tiny, imageAccurate1_tiny, size);
-	//Free memory no longer in use
+
 	free(imageAccurate1_tiny->data);
 	free(imageAccurate1_tiny);
 
-	// Process the small case:
+
+	//Process the small case:
 	size = 3;
+
 	AccurateImage *imageAccurate1_small = convertImageToNewFormat(image);
 	AccurateImage *imageAccurate2_small = convertImageToNewFormat(image);
+
 	performNewIdeaIteration(imageAccurate2_small, imageAccurate1_small, size);
+
 	free(imageAccurate1_small->data);
 	free(imageAccurate1_small);
-	//Finalize small case
+
+
 	PPMImage *final_tiny = performNewIdeaFinalization(imageAccurate2_tiny,  imageAccurate2_small);
-	//This is when tiny data is no longer in use
+
+	if(argc > 1)
+		writePPM("flower_tiny.ppm", final_tiny);
+	else
+		writeStreamPPM(stdout, final_tiny);
+
+	free(final_tiny->data);
+	free(final_tiny);
 	free(imageAccurate2_tiny->data);
 	free(imageAccurate2_tiny);
+
 
 	// Process the medium case:
 	size = 5;
 	AccurateImage *imageAccurate1_medium = convertImageToNewFormat(image);
 	AccurateImage *imageAccurate2_medium = convertImageToNewFormat(image);
+
 	performNewIdeaIteration(imageAccurate2_medium, imageAccurate1_medium, size);
+
 	free(imageAccurate1_medium->data);
 	free(imageAccurate1_medium);
+
 	PPMImage *final_small = performNewIdeaFinalization(imageAccurate2_small,  imageAccurate2_medium);
+
+	if(argc > 1)
+		writePPM("flower_small.ppm", final_small);
+	else
+		writeStreamPPM(stdout, final_small);
+
+	free(final_small->data);
+	free(final_small);
 	free(imageAccurate2_small->data);
 	free(imageAccurate2_small);
 
+
 	//Process the large case:
 	size = 8;
+
 	AccurateImage *imageAccurate1_large = convertImageToNewFormat(image);
 	AccurateImage *imageAccurate2_large = convertImageToNewFormat(image);
+
 	free(image->data);
 	free(image);
+
 	performNewIdeaIteration(imageAccurate2_large, imageAccurate1_large, size);
+
 	free(imageAccurate1_large->data);
 	free(imageAccurate1_large);
+
 	PPMImage *final_medium = performNewIdeaFinalization(imageAccurate2_medium,  imageAccurate2_large);
+
+	if(argc > 1)
+		writePPM("flower_medium.ppm", final_medium);
+	else
+		writeStreamPPM(stdout, final_medium);
+
 	free(imageAccurate2_medium->data);
 	free(imageAccurate2_medium);
 	free(imageAccurate2_large->data);
 	free(imageAccurate2_large);
-
-	if(argc > 1) {
-		writePPM("flower_tiny.ppm", final_tiny);
-		writePPM("flower_small.ppm", final_small);
-		writePPM("flower_medium.ppm", final_medium);
-	} else {
-		writeStreamPPM(stdout, final_tiny);
-		writeStreamPPM(stdout, final_small);
-		writeStreamPPM(stdout, final_medium);
-	}
-	free(final_tiny->data);
-	free(final_tiny);
-	free(final_small->data);
-	free(final_small);
 	free(final_medium->data);
 	free(final_medium);
 
