@@ -3,7 +3,7 @@
 all: newImageIdea newImageIdeaReference
 
 newImageIdea: newImageIdea.c ppm.c
-	gcc -O2 --std=c99 -o $@ $^ -lm
+	gcc -O3 --std=c99 -o $@ $^ -lm
 
 
 newImageIdeaReference: newImageIdeaReference.c ppm.c
