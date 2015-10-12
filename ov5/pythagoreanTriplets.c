@@ -66,6 +66,7 @@ int main(int argc, char **argv) {
 	for(int i = 0; i < amountOfRuns; i++)
 	{
 		sum = 0;
+#pragma omp parallel for shared(sum)
 		for(int c = start[i]; c < stop[i]; c++)
 		{
 			for(int b = 4; b < c; b++)
