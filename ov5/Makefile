@@ -1,4 +1,4 @@
-.PHONY: clean all run mpi omp mpiomp serial run_serial run_omp
+.PHONY: clean all run mpi omp mpiomp serial run_serial run_omp run_big_serial run_big_omp
 
 all: omp serial
 
@@ -21,3 +21,9 @@ run_serial: serial
 	
 run_omp: omp
 	./omp_program < input.txt
+	
+run_big_serial: serial
+	./serial_program < big_input.txt
+	
+run_big_omp: omp
+	./omp_program < big_input.txt
