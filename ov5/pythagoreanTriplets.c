@@ -75,6 +75,7 @@ int main(int argc, char **argv) {
 				if(gcd(m, n) == 1)
 				{
 					c = m * m + n * n;
+					printf(" m == %d\tn == %d\tc == %d\n", m, n, c);
 					if(c >= start[i] && c < stop[i])
 					{
 						sum++;
