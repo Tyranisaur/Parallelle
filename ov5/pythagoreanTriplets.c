@@ -123,6 +123,7 @@ int main(int argc, char **argv) {
 						innerSum++;
 					}
 				}
+#pragma omp critical
 				localSum += innerSum;
 
 			}
