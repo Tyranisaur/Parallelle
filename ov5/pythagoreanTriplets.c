@@ -73,7 +73,7 @@ int main(int argc, char **argv) {
 	 *	In other words, a total of <amountOfRuns> sums/printfs.
 	 */
 	int globalSum;
-	int localSum
+	int localSum;
 	for(int i = 0; i < amountOfRuns; i++)
 	{
 		globalSum = 0;
