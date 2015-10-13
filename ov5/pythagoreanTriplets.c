@@ -75,7 +75,7 @@ int main(int argc, char **argv) {
 				if(gcd(m, n) == 1)
 				{
 					c = m * m + n * n;
-					if(c * c >= start && c * c < stop[i])
+					if(c * c >= start[i] && c * c < stop[i])
 					{
 						sum++;
 					}
