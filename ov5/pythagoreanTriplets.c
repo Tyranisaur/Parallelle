@@ -98,10 +98,6 @@ int main(int argc, char **argv) {
 					{
 						innerSum++;
 					}
-					else if( c >= stop[i])
-					{
-						break;
-					}
 				}
 				localSum += innerSum;
 			}
