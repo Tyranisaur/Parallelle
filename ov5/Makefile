@@ -15,7 +15,7 @@ mpiomp: pythagoreanTriplets.c
 	mpicc -std=c99 -o combined_program pythagoreanTriplets.c -fopenmp -DHAVE_MPI -DHAVE_OPENMP
 	
 clean:
-	rm -f serial omp_program mpi_program combined_program
+	rm -f serial_program omp_program mpi_program combined_program
 
 run_serial: serial
 	./serial_program < input.txt
