@@ -96,6 +96,7 @@ int main(int argc, char **argv) {
 					c = m * m + n * n;
 					if(c >= start[i] && c < stop[i])
 					{
+#pragma omp atomic
 						innerSum++;
 					}
 				}
