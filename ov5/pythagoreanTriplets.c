@@ -130,6 +130,7 @@ int main(int argc, char **argv) {
 		}
 #ifdef HAVE_MPI
 		MPI_Reduce(myRank ? &globalSum : MPI_IN_PLACE, &globalSum, 1, MPI_INT, MPI_SUM, 0, MPI_COMM_WORLD);
+		MPI_Finalize();
 #endif
 
 		if(myRank == 0)
