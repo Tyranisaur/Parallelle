@@ -61,7 +61,7 @@ int main(int argc, char **argv) {
 		{
 			numThreads[i] = tot_threads;
 		}
-		else
+		if(matches < 2)
 		{
 			stop[i] = 0;
 			start[i] = 0;
