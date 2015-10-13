@@ -75,11 +75,11 @@ int main(int argc, char **argv) {
 				if(gcd(m, n) == 1 && ((m - n) & 0x1))
 				{
 					c = m * m + n * n;
-					printf(" m == %d\tn == %d\tc == %d\n", m, n, c);
+					//printf(" m == %d\tn == %d\tc == %d\n", m, n, c);
 					if(c >= start[i] && c < stop[i])
 					{
 						sum++;
-						printf("added\n");
+						//printf("added\n");
 					}
 					else if( c >= stop[i])
 					{
