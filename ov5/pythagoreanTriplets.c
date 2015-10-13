@@ -66,19 +66,22 @@ int main(int argc, char **argv) {
 	for(int i = 0; i < amountOfRuns; i++)
 	{
 		sum = 0;
+		int a, b, c;
 #pragma omp parallel for shared(sum) num_threads(numThreads[i])
-		for(int c = start[i]; c < stop[i]; c++)
+		for(int m = 2; m < stop[i];m++)
 		{
-			for(int b = 4; b < c; b++)
+			for(int n = 1; n < m; n++)
 			{
-				for(int a = 3; a < b; a++)
+				if(gcd(m, n) == 1)
 				{
-					if( a * a + b * b == c * c )
+					c = m * m + n * n;
+					if(c * c >= start && c * c < stop[i])
 					{
-						if( gcd(a,b) == 1)
-						{
-							sum++;
-						}
+						sum++;
+					}
+					else if( c * c >= stop[i])
+					{
+						break;
 					}
 				}
 			}
