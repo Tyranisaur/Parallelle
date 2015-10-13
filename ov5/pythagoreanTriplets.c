@@ -73,24 +73,23 @@ int main(int argc, char **argv) {
 	 *	In other words, a total of <amountOfRuns> sums/printfs.
 	 */
 	int globalSum;
+	int localSum
 	for(int i = 0; i < amountOfRuns; i++)
 	{
 		globalSum = 0;
-		int a, b, c;
-#pragma omp parallel for shared(globalSum) num_threads(numThreads[i])
+		int c;
+#pragma omp parallel for shared(globalSum) private(localSum) num_threads(numThreads[i])
 		for(int m = 2; m < stop[i];m++)
 		{
-			int localSum = 0;
+			localSum = 0;
 			for(int n = 1; n < m; n++)
 			{
 				if(gcd(m, n) == 1 && ((m - n) & 0x1))
 				{
 					c = m * m + n * n;
-					//printf(" m == %d\tn == %d\tc == %d\n", m, n, c);
 					if(c >= start[i] && c < stop[i])
 					{
 						localSum++;
-						//printf("added\n");
 					}
 					else if( c >= stop[i])
 					{
