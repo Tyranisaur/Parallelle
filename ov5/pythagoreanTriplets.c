@@ -68,9 +68,10 @@ int main(int argc, char **argv) {
 	{
 		globalSum = 0;
 		int a, b, c;
-#pragma omp parallel for shared(globalSum) private(localSum = 0) num_threads(numThreads[i])
+#pragma omp parallel for shared(globalSum) private(localSum) num_threads(numThreads[i])
 		for(int m = 2; m < stop[i];m++)
 		{
+			localSum = 0;
 			for(int n = 1; n < m; n++)
 			{
 				if(gcd(m, n) == 1 && ((m - n) & 0x1))
@@ -94,7 +95,7 @@ int main(int argc, char **argv) {
 
 
 
-		printf("%d\n", sum);
+		printf("%d\n", globalSum);
 	}
 	return 0;
 }
