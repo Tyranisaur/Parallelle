@@ -48,13 +48,23 @@ int main(int argc, char **argv) {
 		ssize_t readChars = getline(&inputLine, &lineLength, stdin);
 
 		// If there exists at least two matches (2x %d)...
-		if (sscanf(inputLine, "%d %d %d", &current_start, &current_stop, &tot_threads) >= 2){
+		int matches =sscanf(inputLine, "%d %d %d", &current_start, &current_stop, &tot_threads);
+		if (matches >= 2){
 			if(current_start < 0 || current_stop < 0){
 				current_start = 0, current_stop = 0;
 			}
 			stop[i] = current_stop;
 			start[i] = current_start;
+			numThreads[i] = 1;
+		}
+		if(matches >= 3)
+		{
 			numThreads[i] = tot_threads;
+		}
+		else
+		{
+			stop[i] = 0;
+			start[i] = 0;
 		}
 	}
 
@@ -68,7 +78,7 @@ int main(int argc, char **argv) {
 	{
 		globalSum = 0;
 		int a, b, c;
-#pragma omp parallel for shared(globalSum) private(localSum) num_threads(numThreads[i])
+#pragma omp parallel for shared(globalSum) threadprivate(localSum) num_threads(numThreads[i])
 		for(int m = 2; m < stop[i];m++)
 		{
 			localSum = 0;
