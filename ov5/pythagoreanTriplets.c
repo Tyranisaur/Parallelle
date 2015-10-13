@@ -50,7 +50,7 @@ int main(int argc, char **argv) {
 		// If there exists at least two matches (2x %d)...
 		int matches =sscanf(inputLine, "%d %d %d", &current_start, &current_stop, &tot_threads);
 		if (matches >= 2){
-			if(current_start < 0 || current_stop < 0){
+			if(current_start < 0 || current_stop < 0 || current_stop >= current_start){
 				current_start = 0, current_stop = 0;
 			}
 			stop[i] = current_stop;
@@ -73,15 +73,20 @@ int main(int argc, char **argv) {
 	 *	In other words, a total of <amountOfRuns> sums/printfs.
 	 */
 	int globalSum;
-	int localSum;
+	int c;
 	for(int i = 0; i < amountOfRuns; i++)
 	{
 		globalSum = 0;
-		int c;
-#pragma omp parallel for shared(globalSum) private(localSum) num_threads(numThreads[i])
-		for(int m = 2; m < stop[i];m++)
+		if(stop[i] == 0)
 		{
-			localSum = 0;
+			printf("%d\n", globalSum);
+			continue;
+		}
+
+#pragma omp parallel for shared(globalSum) num_threads(numThreads[i])
+		for(int m = 2; m < stop[i]; m++)
+		{
+			 int localSum = 0;
 			for(int n = 1; n < m; n++)
 			{
 				if(gcd(m, n) == 1 && ((m - n) & 0x1))
@@ -97,7 +102,7 @@ int main(int argc, char **argv) {
 					}
 				}
 			}
-#pragma omp critical
+#pragma 	omp critical
 			globalSum += localSum;
 		}
 
