@@ -1,6 +1,6 @@
 .PHONY: clean all run mpi omp mpiomp serial run_serial run_omp run_big_serial run_big_omp
 
-all: omp serial
+all: omp serial mpi mpiomp
 
 serial: pythagoreanTriplets.c
 	gcc -std=c99 -o serial_program pythagoreanTriplets.c
