@@ -1,4 +1,3 @@
-#define _GNU_SOURCE
 #include <stdio.h> // for stdin
 #include <stdlib.h>
 #include <unistd.h> // for ssize_t
@@ -27,8 +26,6 @@ gcd ( int a, int b )
 int main(int argc, char **argv) {
 	char *inputLine = NULL; size_t lineLength = 0;
 	int *start, *stop, *numThreads, amountOfRuns = 0;
-
-	//initialize variables to work without MPI
 	int myRank = 0, totalRanks = 1;
 
 
@@ -99,21 +96,15 @@ int main(int argc, char **argv) {
 	for(int i = 0; i < amountOfRuns; i++)
 	{
 		globalSum = 0;
-
-		//If input is invalid, rank 0 can print right away and all ranks can skip to next iteration
-		if(stop[i] == 0)
+		if(myRank == 0)
 		{
-			if(myRank == 0)
+			if(stop[i] == 0)
 			{
 				printf("%d\n", globalSum);
+				continue;
 			}
-			continue;
 		}
 
-		//Algorithm based on Euclid's formula, where variables n and m are used
-		//Iterating over m values using MPI and n values with OMP withing each MPI process
-		//Strided iteration over n values to easily balance number of passes
-		//However early passes have less work, so this might not be ideal
 		for(int m = 2 + myRank; m < stop[i]; m += totalRanks)
 		{
 			//localSum is the sum across OMP threads
@@ -124,7 +115,6 @@ int main(int argc, char **argv) {
 			{
 				//innerSum is the sum within each loop iteration done by a thread
 				int innerSum = 0;
-
 				if(gcd(m, n) == 1 && ((m - n) & 0x1))
 				{
 					c = m * m + n * n;
