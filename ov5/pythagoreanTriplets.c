@@ -76,9 +76,12 @@ int main(int argc, char **argv) {
 	}
 #ifdef HAVE_MPI
 	MPI_Bcast (&amountOfRuns, 1, MPI_INT, 0, MPI_COMM_WORLD);
-	stop = (int*) calloc(amountOfRuns, sizeof(int));
-	start = (int*) calloc(amountOfRuns, sizeof(int));
-	numThreads = (int*) calloc(amountOfRuns, sizeof(int));
+	if( myRank )
+	{
+		stop = (int*) calloc(amountOfRuns, sizeof(int));
+		start = (int*) calloc(amountOfRuns, sizeof(int));
+		numThreads = (int*) calloc(amountOfRuns, sizeof(int));
+	}
 	MPI_Bcast (start, amountOfRuns, MPI_INT, 0, MPI_COMM_WORLD);
 	MPI_Bcast (stop, amountOfRuns, MPI_INT, 0, MPI_COMM_WORLD);
 	MPI_Bcast (numThreads, amountOfRuns, MPI_INT,    0, MPI_COMM_WORLD);
