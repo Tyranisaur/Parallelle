@@ -50,7 +50,7 @@ int main(int argc, char **argv) {
 		// If there exists at least two matches (2x %d)...
 		int matches =sscanf(inputLine, "%d %d %d", &current_start, &current_stop, &tot_threads);
 		if (matches >= 2){
-			if(current_start < 0 || current_stop < 0 || current_stop >= current_start){
+			if(current_start < 0 || current_stop < 0 || current_stop <= current_start){
 				current_start = 0, current_stop = 0;
 			}
 			stop[i] = current_stop;
