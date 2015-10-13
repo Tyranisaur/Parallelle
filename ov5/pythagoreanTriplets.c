@@ -97,6 +97,7 @@ int main(int argc, char **argv) {
 					}
 				}
 			}
+#pragma omp atomic
 			globalSum += localSum;
 		}
 
