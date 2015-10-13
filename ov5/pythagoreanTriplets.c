@@ -110,7 +110,7 @@ int main(int argc, char **argv) {
 			//localSum is the sum across OMP threads
 			int localSum = 0;
 
-#pragma 	omp parallel for shared(localSum) num_threads(numThreads[i]) reduction( +: localSum)
+#pragma 	omp parallel for num_threads(numThreads[i]) reduction( +: localSum)
 			for(int n = 1; n < m; n++)
 			{
 				//innerSum is the sum within each loop iteration done by a thread
