@@ -87,23 +87,24 @@ int main(int argc, char **argv) {
 		{
 			int localSum = 0;
 
-#pragma 	omp parallel for shared(globalSum) num_threads(numThreads[i])
+#pragma 	omp parallel for shared(localSum) num_threads(numThreads[i])
 			for(int n = 1; n < m; n++)
 			{
+				int innerSum = 0;
 				if(gcd(m, n) == 1 && ((m - n) & 0x1))
 				{
 					c = m * m + n * n;
 					if(c >= start[i] && c < stop[i])
 					{
-						localSum++;
+						innerSum++;
 					}
 					else if( c >= stop[i])
 					{
 						break;
 					}
 				}
+				localSum += innerSum;
 			}
-#pragma 	omp critical
 			globalSum += localSum;
 		}
 
