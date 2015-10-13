@@ -72,7 +72,7 @@ int main(int argc, char **argv) {
 		{
 			for(int n = 1; n < m; n++)
 			{
-				if(gcd(m, n) == 1)
+				if(gcd(m, n) == 1 && ((m - n) & 0x1))
 				{
 					c = m * m + n * n;
 					printf(" m == %d\tn == %d\tc == %d\n", m, n, c);
