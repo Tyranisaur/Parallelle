@@ -1,4 +1,3 @@
-#define _GNU_SOURCE
 #include <stdio.h> // for stdin
 #include <stdlib.h>
 #include <unistd.h> // for ssize_t
@@ -87,10 +86,9 @@ int main(int argc, char **argv) {
 	MPI_Bcast (numThreads, amountOfRuns, MPI_INT,    0, MPI_COMM_WORLD);
 #endif
 
-	/*
-	 *	Remember to only print 1 (one) sum per start/stop.
-	 *	In other words, a total of <amountOfRuns> sums/printfs.
-	 */
+
+
+	//globalSum is the sum across MPI ranks
 	int globalSum;
 	int c;
 
@@ -109,11 +107,13 @@ int main(int argc, char **argv) {
 
 		for(int m = 2 + myRank; m < stop[i]; m += totalRanks)
 		{
+			//localSum is the sum across OMP threads
 			int localSum = 0;
 
-#pragma 	omp parallel for shared(localSum) num_threads(numThreads[i])
+#pragma 	omp parallel for shared(localSum) num_threads(numThreads[i]) reduction( +: localSum)
 			for(int n = 1; n < m; n++)
 			{
+				//innerSum is the sum within each loop iteration done by a thread
 				int innerSum = 0;
 				if(gcd(m, n) == 1 && ((m - n) & 0x1))
 				{
@@ -123,8 +123,11 @@ int main(int argc, char **argv) {
 						innerSum++;
 					}
 				}
-#pragma 		omp critical
+#ifdef HAVE_OMP
+				localSum = innerSum;
+#else
 				localSum += innerSum;
+#endif
 			}
 			globalSum += localSum;
 		}
