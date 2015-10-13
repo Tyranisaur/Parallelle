@@ -22,6 +22,12 @@ run_serial: serial
 run_omp: omp
 	./omp_program < input.txt
 	
+run_mpi: mpi
+	mpirun -n 4 ./mpi_program < input.txt
+	
+run_mpiomp: mpiomp
+	mpirun -n 4 ./combined_program < input.txt
+
 run_big_serial: serial
 	./serial_program < big_input.txt
 	
