@@ -79,6 +79,7 @@ int main(int argc, char **argv) {
 					if(c >= start[i] && c < stop[i])
 					{
 						sum++;
+						printf("added\n");
 					}
 					else if( c >= stop[i])
 					{
