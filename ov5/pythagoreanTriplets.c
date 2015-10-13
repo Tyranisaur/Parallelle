@@ -75,12 +75,11 @@ int main(int argc, char **argv) {
 				if(gcd(m, n) == 1)
 				{
 					c = m * m + n * n;
-					printf( "c == %d\n", c);
-					if(c * c >= start[i] && c * c < stop[i])
+					if(c >= start[i] && c < stop[i])
 					{
 						sum++;
 					}
-					else if( c * c >= stop[i])
+					else if( c >= stop[i])
 					{
 						break;
 					}
