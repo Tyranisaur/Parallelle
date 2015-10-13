@@ -83,10 +83,11 @@ int main(int argc, char **argv) {
 			continue;
 		}
 
-#pragma omp parallel for shared(globalSum) num_threads(numThreads[i])
 		for(int m = 2; m < stop[i]; m++)
 		{
-			 int localSum = 0;
+			int localSum = 0;
+
+#pragma 	omp parallel for shared(globalSum) num_threads(numThreads[i])
 			for(int n = 1; n < m; n++)
 			{
 				if(gcd(m, n) == 1 && ((m - n) & 0x1))
