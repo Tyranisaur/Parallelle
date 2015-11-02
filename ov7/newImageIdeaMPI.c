@@ -7,6 +7,7 @@
 #define NBR_EXCH_TAG 1
 
 #include "ppm.h"
+#define OFFSETOF(type, field)    ((unsigned long) &(((type *) 0)->field))
 
 
 // Image from:
@@ -246,13 +247,13 @@ int main(int argc, char** argv) {
 
 	//Create MPI datatype for pixel
 	MPI_Datatype pixel;
-	int blockLengths[] = { sizeof(float), sizeof(float), sizeof(float)};
+	int blockLengths[3] = { sizeof(float), sizeof(float), sizeof(float)};
 	MPI_Datatype types[3] = {MPI_FLOAT, MPI_FLOAT, MPI_FLOAT};
 	MPI_Aint offsets[3];
 
-	offsets[0] = offsetof(AccuratePixel, red);
-	offsets[1] = offsetof(AccuratePixel, green);
-	offsets[0] = offsetof(AccuratePixel, blue);
+	offsets[0] = OFFSETOF(AccuratePixel, red);
+	offsets[1] = OFFSETOF(AccuratePixel, green);
+	offsets[2] = OFFSETOF(AccuratePixel, blue);
 
 	MPI_Type_create_struct(3, blockLengths, offsets, types, &pixel);
 	MPI_Type_commit(&pixel);
@@ -289,7 +290,7 @@ int main(int argc, char** argv) {
 	}
 
 	//Switch for filter size
-	//All ranks process one version of the image in the small image
+	//All ranks process one version of the image in the small image memory
 	switch(myRank){
 	case 0:
 		// Process the tiny case:
@@ -370,6 +371,7 @@ int main(int argc, char** argv) {
 
 		}
 	}
+	MPI_Finalize();
 
 	// free all memory structures
 	freeImage(imageUnchanged);
