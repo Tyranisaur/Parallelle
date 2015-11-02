@@ -284,7 +284,8 @@ int main(int argc, char** argv) {
 	//Broadcast image
 	printf("rank %d before second broadcast\n", myRank);
 	printf("original struct is %d bytes\n", sizeof(AccuratePixel));
-	printf("new pixel is %d bytes\n", MPI_Type_size(pixel));
+	int* buf;
+	printf("new pixel is %d bytes\n", MPI_Type_size(pixel, buf));
 	MPI_Bcast(imageUnchanged->data,	imageDimmensions[0]*imageDimmensions[1], pixel, 0, MPI_COMM_WORLD);
 	printf("rank %d after second broadcast\n", myRank);
 	//Allocate buffer and small image in all ranks
