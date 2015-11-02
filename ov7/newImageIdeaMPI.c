@@ -362,6 +362,7 @@ int main(int argc, char** argv) {
 			// save tiny case result
 			performNewIdeaFinalization(imageSmall,  imageBig, imageOut);
 			writePPM("flower_tiny.ppm", imageOut);
+			printf("rank 0 finished\n");
 
 		}
 		if( myRank == 1)
@@ -369,13 +370,19 @@ int main(int argc, char** argv) {
 			// save small case
 			performNewIdeaFinalization( imageSmall, imageBig,imageOut);
 			writePPM("flower_small.ppm", imageOut);
+			printf("rank 1 finished\n");
 		}
 		if(myRank == 2)
 		{
 			// save the medium case
 			performNewIdeaFinalization(imageSmall,  imageBig, imageOut);
 			writePPM("flower_medium.ppm", imageOut);
+			printf("rank 3 finished\n");
 
+		}
+		if(myRank == 3)
+		{
+			printf("rank 3 finished\n");
 		}
 	}
 	MPI_Finalize();
