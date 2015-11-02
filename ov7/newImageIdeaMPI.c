@@ -265,20 +265,23 @@ int main(int argc, char** argv) {
 		image = readPPM("flower.ppm");
 		imageDimmensions[0] = image->x;
 		imageDimmensions[1] = image->y;
-
-		imageUnchanged = convertImageToNewFormat(image); // save the unchanged image from input image
 	}
 	//Broadcast size of image
 	MPI_Bcast(imageDimmensions,	2, MPI_INT, 0, MPI_COMM_WORLD);
+		printf("rank %d after first broadcast\n", myRank);
 	if(myRank)
 	{
 		//Allocate memory for unchanged image in other ranks
 		imageUnchanged = malloc(sizeof(AccurateImage));
 		imageUnchanged->data = malloc(sizeof(AccuratePixel)* imageDimmensions[0]*imageDimmensions[1]);
 	}
+	else
+	{
+		imageUnchanged = convertImageToNewFormat(image); // save the unchanged image from input image
+	}
 	//Broadcast image
 	MPI_Bcast(imageUnchanged->data,	imageDimmensions[0]*imageDimmensions[1], pixel, 0, MPI_COMM_WORLD);
-
+	printf("rank %d after second broadcast\n", myRank);
 	//Allocate buffer and small image in all ranks
 	AccurateImage *imageBuffer = createEmptyImage2(imageDimmensions[0], imageDimmensions[1]);
 	AccurateImage *imageSmall = createEmptyImage2(imageDimmensions[0], imageDimmensions[1]);
