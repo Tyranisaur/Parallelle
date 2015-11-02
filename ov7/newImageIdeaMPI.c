@@ -47,7 +47,7 @@ AccurateImage *createEmptyImage(PPMImage *image){
 
 	return imageAccurate;
 }
-AccurateImage *createEmptyImage(int x, int y){
+AccurateImage *createEmptyImage2(int x, int y){
 	AccurateImage *imageAccurate;
 	imageAccurate = (AccurateImage *)malloc(sizeof(AccurateImage));
 	imageAccurate->data = (AccuratePixel*)malloc(x * y * sizeof(AccuratePixel));
@@ -279,13 +279,13 @@ int main(int argc, char** argv) {
 	MPI_Bcast(imageUnchanged->data,	imageDimmensions[0]*imageDimmensions[1], pixel, 0, MPI_COMM_WORLD);
 
 	//Allocate buffer and small image in all ranks
-	AccurateImage *imageBuffer = createEmptyImage(imageDimmensions[0], imageDimmensions[1]);
-	AccurateImage *imageSmall = createEmptyImage(imageDimmensions[0], imageDimmensions[1]);
+	AccurateImage *imageBuffer = createEmptyImage2(imageDimmensions[0], imageDimmensions[1]);
+	AccurateImage *imageSmall = createEmptyImage2(imageDimmensions[0], imageDimmensions[1]);
 	AccurateImage *imageBig;
 	if(myRank < 3)
 	{
 		//Only allocate big image in lowest 3 ranks
-		imageBig = createEmptyImage(imageDimmensions[0], imageDimmensions[1]);
+		imageBig = createEmptyImage2(imageDimmensions[0], imageDimmensions[1]);
 	}
 
 	//Switch for filter size
