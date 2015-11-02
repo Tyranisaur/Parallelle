@@ -280,6 +280,7 @@ int main(int argc, char** argv) {
 		imageUnchanged = convertImageToNewFormat(image); // save the unchanged image from input image
 	}
 	//Broadcast image
+	printf("rank %d before second broadcast\n", myRank);
 	MPI_Bcast(imageUnchanged->data,	imageDimmensions[0]*imageDimmensions[1], pixel, 0, MPI_COMM_WORLD);
 	printf("rank %d after second broadcast\n", myRank);
 	//Allocate buffer and small image in all ranks
