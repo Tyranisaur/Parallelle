@@ -274,6 +274,8 @@ int main(int argc, char** argv) {
 		//Allocate memory for unchanged image in other ranks
 		imageUnchanged = malloc(sizeof(AccurateImage));
 		imageUnchanged->data = malloc(sizeof(AccuratePixel)* imageDimmensions[0]*imageDimmensions[1]);
+		imageUnchanged->x = imageDimmensions[0];
+		imageUnchanged->y = imageDimmensions[1];
 	}
 	else
 	{
@@ -281,7 +283,9 @@ int main(int argc, char** argv) {
 	}
 	//Broadcast image
 	printf("rank %d before second broadcast\n", myRank);
-	MPI_Bcast(&(imageUnchanged->data),	imageDimmensions[0]*imageDimmensions[1], pixel, 0, MPI_COMM_WORLD);
+	printf("original struct is %d bytes\n", sizeof(AccuratePixel));
+	printf("new pixel is %d bytes\n", sizeof(pixel));
+	MPI_Bcast(imageUnchanged->data,	imageDimmensions[0]*imageDimmensions[1], pixel, 0, MPI_COMM_WORLD);
 	printf("rank %d after second broadcast\n", myRank);
 	//Allocate buffer and small image in all ranks
 	AccurateImage *imageBuffer = createEmptyImage2(imageDimmensions[0], imageDimmensions[1]);
