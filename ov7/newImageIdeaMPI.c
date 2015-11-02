@@ -259,8 +259,8 @@ int main(int argc, char** argv) {
 	MPI_Datatype pixel;
 	MPI_Type_create_resized(pixel_type, 0, sizeof(AccuratePixel), &pixel);
 	MPI_Type_commit(&pixel);
-	
-	
+
+
 	AccurateImage *imageUnchanged;
 	if(!myRank){
 		//Rank 0 reads unchanged image and sends to other ranks
@@ -333,7 +333,7 @@ int main(int argc, char** argv) {
 		break;
 	}
 	MPI_Request request[3];
-	
+
 	//Ranks other than 0 sends to one rank less than itself
 	if(myRank > 0)
 	{
@@ -378,10 +378,6 @@ int main(int argc, char** argv) {
 			printf("rank 2 finished\n");
 
 		}
-		if(myRank == 3)
-		{
-			printf("rank 3 finished\n");
-		}
 	}
 	MPI_Finalize();
 
@@ -397,8 +393,11 @@ int main(int argc, char** argv) {
 		freeImage(imageBig);
 		free(imageOut->data);
 		free(imageOut);
-		free(image->data);
-		free(image);
+		if(!myRank)
+		{
+			free(image->data);
+			free(image);
+		}
 	}
 
 	return 0;
