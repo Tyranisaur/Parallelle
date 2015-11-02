@@ -324,7 +324,7 @@ int main(int argc, char** argv) {
 		performNewIdeaIteration(imageSmall, imageBuffer, 8);
 		break;
 	default:
-
+		break;
 	}
 	MPI_Request request[3];
 	
