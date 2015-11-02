@@ -285,7 +285,7 @@ int main(int argc, char** argv) {
 	printf("rank %d before second broadcast\n", myRank);
 	printf("original struct is %d bytes\n", sizeof(AccuratePixel));
 	int buf;
-	MPI_Type_size(pixel, &buf)
+	MPI_Type_size(pixel, &buf);
 	printf("new pixel is %d bytes\n", buf);
 	MPI_Bcast(imageUnchanged->data,	imageDimmensions[0]*imageDimmensions[1], pixel, 0, MPI_COMM_WORLD);
 	printf("rank %d after second broadcast\n", myRank);
