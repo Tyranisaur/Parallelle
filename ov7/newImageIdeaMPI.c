@@ -388,8 +388,11 @@ int main(int argc, char** argv) {
 	MPI_Finalize();
 
 	// free all memory structures
+	printf("rank %d freeing unchanged", myRank);
 	freeImage(imageUnchanged);
+	printf("rank %d freeing buffer", myRank);
 	freeImage(imageBuffer);
+	printf("rank %d freeing small", myRank);
 	freeImage(imageSmall);
 	if(myRank < 3)
 	{
