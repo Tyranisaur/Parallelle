@@ -352,9 +352,7 @@ int main(int argc, char** argv) {
 		imageOut->data = (PPMPixel*)malloc(imageDimmensions[0] * imageDimmensions[1] * sizeof(PPMPixel));
 
 		//Wait for receive to finish
-		printf("waiting for receive\n");
 		MPI_Wait( &request[myRank], MPI_STATUS_IGNORE);
-		printf("received\n");
 
 		//All these ranks finalize and write their respective images
 		if(myRank == 0)
@@ -377,7 +375,7 @@ int main(int argc, char** argv) {
 			// save the medium case
 			performNewIdeaFinalization(imageSmall,  imageBig, imageOut);
 			writePPM("flower_medium.ppm", imageOut);
-			printf("rank 3 finished\n");
+			printf("rank 2 finished\n");
 
 		}
 		if(myRank == 3)
@@ -388,11 +386,11 @@ int main(int argc, char** argv) {
 	MPI_Finalize();
 
 	// free all memory structures
-	printf("rank %d freeing unchanged", myRank);
+	printf("rank %d freeing unchanged\n", myRank);
 	freeImage(imageUnchanged);
-	printf("rank %d freeing buffer", myRank);
+	printf("rank %d freeing buffer\n", myRank);
 	freeImage(imageBuffer);
-	printf("rank %d freeing small", myRank);
+	printf("rank %d freeing small\n", myRank);
 	freeImage(imageSmall);
 	if(myRank < 3)
 	{
