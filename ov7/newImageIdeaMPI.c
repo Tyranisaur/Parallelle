@@ -246,7 +246,7 @@ int main(int argc, char** argv) {
 	MPI_Comm_size(MPI_COMM_WORLD, &totalRanks);
 
 	//Create MPI datatype for pixel
-	MPI_Datatype pixel;
+	MPI_Datatype pixel_type;
 	int blockLengths[3] = { sizeof(float), sizeof(float), sizeof(float)};
 	MPI_Datatype types[3] = {MPI_FLOAT, MPI_FLOAT, MPI_FLOAT};
 	MPI_Aint offsets[3];
@@ -255,7 +255,9 @@ int main(int argc, char** argv) {
 	offsets[1] = OFFSETOF(AccuratePixel, green);
 	offsets[2] = OFFSETOF(AccuratePixel, blue);
 
-	MPI_Type_create_struct(3, blockLengths, offsets, types, &pixel);
+	MPI_Type_create_struct(3, blockLengths, offsets, types, &pixel_type);
+	MPI_Datatype pixel;
+	MPI_Type_create_resized(pixel_type, 0, sizeof(AccuratePixel), &pixel);
 	MPI_Type_commit(&pixel);
 	
 	
@@ -284,10 +286,6 @@ int main(int argc, char** argv) {
 	printf("original struct is %d bytes\n", sizeof(AccuratePixel));
 	int buf;
 	MPI_Type_size(pixel, &buf);
-	printf("new pixel is %d bytes\n", buf);
-	printf("offset of red is %d\n", OFFSETOF(AccuratePixel, red));
-	printf("offset of green is %d\n", OFFSETOF(AccuratePixel, green));
-	printf("offset of blue is %d\n", OFFSETOF(AccuratePixel, blue));
 	MPI_Bcast(imageUnchanged->data,	imageDimmensions[0]*imageDimmensions[1], pixel, 0, MPI_COMM_WORLD);
 	//Allocate buffer and small image in all ranks
 	AccurateImage *imageBuffer = createEmptyImage2(imageDimmensions[0], imageDimmensions[1]);
