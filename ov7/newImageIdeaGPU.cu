@@ -157,7 +157,7 @@ int main(int argc, char** argv) {
 	cudaMalloc((void**) &(gpuUnchanged->data), sizeof(AccuratePixel) * x * y);
 	
 	convertImageToNewFormatGPU<<<y, x>>>(gpuImage, gpuUnchanged);
-	
+	printf("first kernel done\n");
 	
 	cudaMalloc((void**) &gpuBuffer, sizeof(AccurateImage));
 	cudaMemcpy((void*) &(gpuBuffer->x), &x, sizeof(int), cudaMemcpyHostToDevice);
