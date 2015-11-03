@@ -148,6 +148,7 @@ int main(int argc, char** argv) {
 	x = image->x;
 	y = image->y;
 
+	printf("doing first cuda malloc\n");
 	cudaMalloc((void**) &gpuImage, sizeof(PPMImage));
 	cudaMemcpy(gpuImage, image, sizeof(PPMImage), cudaMemcpyHostToDevice);
 	cudaMalloc((void**) &(gpuImage->data), sizeof(PPMPixel) * x * y);
@@ -156,7 +157,6 @@ int main(int argc, char** argv) {
 	cudaMalloc((void**) &gpuUnchanged, sizeof(AccurateImage));
 	cudaMalloc((void**) &(gpuUnchanged->data), sizeof(AccuratePixel) * x * y);
 	
-	printf("doing first kernel\n");
 	convertImageToNewFormatGPU<<<y, x>>>(gpuImage, gpuUnchanged);
 	
 	cudaMalloc((void**) &gpuBuffer, sizeof(AccurateImage));
