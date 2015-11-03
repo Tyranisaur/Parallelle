@@ -149,9 +149,9 @@ int main(int argc, char** argv) {
 	y = image->y;
 
 	cudaMalloc((void**) &gpuImage, sizeof(PPMImage));
-	printf("%s", cudaGetErrorString(cudaGetLastError()));
 	printf("0\n");
 	cudaMalloc((void**) &(gpuImage->data), sizeof(PPMPixel) * x * y);
+	printf("%s\n", cudaGetErrorString(cudaGetLastError()));
 	printf("2\n");
 	cudaMemcpy(&(gpuImage->y), &(image->y), sizeof(int), cudaMemcpyHostToDevice);
 	printf("2\n");
