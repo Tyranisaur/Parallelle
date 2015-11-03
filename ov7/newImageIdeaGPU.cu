@@ -150,9 +150,13 @@ int main(int argc, char** argv) {
 
 	cudaMalloc((void**) &gpuImage, sizeof(PPMImage));
 	printf("0\n");
-	cudaMalloc((void**) &gpuImage->data, sizeof(PPMPixel) * x * y);
+	cudaMalloc((void**) &(gpuImage->data), sizeof(PPMPixel) * x * y);
+	printf("2\n");
+	cudaMemcpy(&(gpuImage->y), &(image->y), sizeof(int), cudaMemcpyHostToDevice);
+	printf("2\n");
+	cudaMemcpy(&(gpuImage->x), &(image->x), sizeof(int), cudaMemcpyHostToDevice);
 	printf("3\n");
-	cudaMemcpy(gpuImage, image, sizeof(PPMImage), cudaMemcpyHostToDevice);
+	cudaMemcpy(gpuImage->data, image->data, sizeof(PPMPixel) * x * y, cudaMemcpyHostToDevice);
 	printf("4\n");
 	cudaMalloc((void**) &gpuUnchanged, sizeof(AccurateImage));
 	printf("5\n");
