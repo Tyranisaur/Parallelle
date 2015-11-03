@@ -180,7 +180,7 @@ int main(int argc, char** argv) {
 	cudaMalloc((void**) &(gpuOutImage->data), sizeof(PPMImage) * x * y);
 
 	cudaMalloc((void**) &gpuFilter, sizeof(int));
-	filter* = 2;
+	*filter = 2;
 	cudaMemcpy((void**)&gpuFilter, &filter, sizeof(int), cudaMemcpyHostToDevice);
 
 	performNewIdeaIterationGPU<<<y, x>>>(gpuSmall, gpuUnchanged, gpuFilter);
@@ -189,7 +189,7 @@ int main(int argc, char** argv) {
 	performNewIdeaIterationGPU<<<y, x>>>(gpuBuffer, gpuSmall, gpuFilter);
 	performNewIdeaIterationGPU<<<y, x>>>(gpuSmall, gpuBuffer, gpuFilter);
 	
-	filter* = 3;
+	*filter = 3;
 	cudaMemcpy((void**)&gpuFilter, &filter, sizeof(int), cudaMemcpyHostToDevice);
 	
 	performNewIdeaIterationGPU<<<y, x>>>(gpuBig, gpuUnchanged, gpuFilter);
@@ -208,7 +208,7 @@ int main(int argc, char** argv) {
 		writeStreamPPM(stdout, image);
 	}
 
-	filter* = 5;
+	*filter = 5;
 	cudaMemcpy((void**)&gpuFilter, &filter, sizeof(int), cudaMemcpyHostToDevice);
 	
 	performNewIdeaIterationGPU<<<y, x>>>(gpuSmall, gpuUnchanged, gpuFilter);
@@ -226,7 +226,7 @@ int main(int argc, char** argv) {
 		writeStreamPPM(stdout, image);
 	}
 	
-	filter* = 8;
+	*filter = 8;
 	cudaMemcpy((void**)&gpuFilter, &filter, sizeof(int), cudaMemcpyHostToDevice);
 
 	performNewIdeaIterationGPU<<<y, x>>>(gpuBig, gpuUnchanged, gpuFilter);
