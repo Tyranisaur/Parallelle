@@ -7,6 +7,14 @@
 // Image from:
 // http://7-themes.com/6971875-funny-flowers-pictures.html
 
+typedef struct {
+     float red,green,blue;
+} AccuratePixel;
+
+typedef struct {
+     int x, y;
+     AccuratePixel *data;
+} AccurateImage;
 
 __global__ void performNewIdeaIterationGPU(AccurateImage * output, AccurateImage * input, int size )
  {
@@ -123,14 +131,6 @@ __global__ void convertImageToNewFormatGPU( PPMImage * inputImage, AccurateImage
 }
 
 
-typedef struct {
-     float red,green,blue;
-} AccuratePixel;
-
-typedef struct {
-     int x, y;
-     AccuratePixel *data;
-} AccurateImage;
 
 
 int main(int argc, char** argv) {
