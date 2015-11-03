@@ -72,7 +72,7 @@ __global__ void performNewIdeaIterationGPU(AccurateImage * output, AccurateImage
 // Finalization function assumes allocated pointers
 __global__ void performNewIdeaFinalizationGPU( AccurateImage * smallImage, AccurateImage * bigImage, PPMImage * outputImage)
 {
-	int index = blockIdx.x * blockDim-x + threadIdx.x;
+	int index = blockIdx.x * blockDim.x + threadIdx.x;
 
 	float value = (bigImage->data[index].red - smallImage->data[index].red);
 		if(value > 255.0f)
@@ -123,7 +123,7 @@ __global__ void performNewIdeaFinalizationGPU( AccurateImage * smallImage, Accur
 //conversion function takes in allocated pointers and fills in output pointer
 __global__ void convertImageToNewFormatGPU( PPMImage * inputImage, AccurateImage * outputImage )
 {
-	int index = blckIdx.x * blockDim.x + threadIdx.x;
+	int index = blockIdx.x * blockDim.x + threadIdx.x;
 	outputImage->data[index].red   = (float) inputImage->data[index].red;
 	outputImage->data[index].green = (float) inputImage->data[index].green;
 	outputImage->data[index].blue  = (float) inputImage->data[index].blue;
@@ -135,8 +135,8 @@ __global__ void convertImageToNewFormatGPU( PPMImage * inputImage, AccurateImage
 int main(int argc, char** argv) {
 	
 	PPMImage *image;
-	PPMIMage * gpuImage, gpuOutImage;
-	AccurateImage * gpuUnchanged, gpuSmall, gpuBig, gpuBuffer;
+	PPMImage * gpuImage, *gpuOutImage;
+	AccurateImage * gpuUnchanged, *gpuSmall, *gpuBig, *gpuBuffer;
 	int* gpuFilter;
     int* filter;
 	if(argc > 1) {
@@ -148,7 +148,7 @@ int main(int argc, char** argv) {
 	x = image->x;
 	y = image->y;
 
-	cudaMalloc((void**) &gpuImage, sizeof(PPMImage);
+	cudaMalloc((void**) &gpuImage, sizeof(PPMImage));
 	cudaMemcpy(gpuImage, image, sizeof(PPMImage), cudaMemcpyHostToDevice);
 	cudaMalloc((void**) &(gpuImage->data), sizeof(PPMPixel) * x * y);
 	cudaMemcpy(gpuImage->data, image->data, sizeof(PPMPixel) * x * y, cudaMemcpyHostToDevice);
