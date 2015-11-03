@@ -138,7 +138,7 @@ int main(int argc, char** argv) {
 	PPMImage * gpuImage, *gpuOutImage;
 	AccurateImage * gpuUnchanged, *gpuSmall, *gpuBig, *gpuBuffer;
 	int* gpuFilter;
-    int* filter = malloc(sizeof(int));
+    int * filter = (int*)malloc(sizeof(int));
 	if(argc > 1) {
 		image = readPPM("flower.ppm");
 	} else {
