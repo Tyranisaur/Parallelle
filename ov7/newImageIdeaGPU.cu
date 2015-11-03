@@ -25,9 +25,9 @@ __global__ void performNewIdeaIterationGPU(AccurateImage * output, AccurateImage
 	float sumG = 0;
 	float sumB = 0;
 	int countIncluded = 0;
-	for(int x = -size; x <= *size; x++) {
+	for(int x = -(*size); x <= *size; x++) {
 	
-		for(int y = -size; y <= *size; y++) {
+		for(int y = -(*size); y <= *size; y++) {
 			int currentX = senterX + x;
 			int currentY = senterY + y;
 			
