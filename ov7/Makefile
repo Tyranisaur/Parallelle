@@ -2,10 +2,10 @@
 
 all: newImageIdeaOMP newImageIdeaMPI newImageIdeaGPU newImageIdeaReference
 
-CUDAFLAGS:=--compiler-bindir gcc
+CUDAFLAGS:=--compiler-bindir gcc-4.8
 
 ppm.o: ppm.c
-	gcc -O2 -march=native --std=c99 $< -o $@ -c
+	gcc-4.8 -O2 -march=native --std=c99 $< -o $@ -c
 
 newImageIdeaGPU.cu.o: newImageIdeaGPU.cu
 	nvcc $(CUDAFLAGS) $< -o $@ -c
