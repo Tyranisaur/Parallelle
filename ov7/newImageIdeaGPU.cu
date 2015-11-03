@@ -20,7 +20,7 @@ __global__ void performNewIdeaIterationGPU(AccurateImage * output, AccurateImage
  {
 	int senterY = blockIdx.x;
 	int senterX = threadIdx.x;
-	int index = blcokIdx.x * blockDim.x + threadIdx.x;
+	int index = blockIdx.x * blockDim.x + threadIdx.x;
 	
 	float sumR = 0;
 	float sumG = 0;
@@ -61,7 +61,7 @@ __global__ void performNewIdeaIterationGPU(AccurateImage * output, AccurateImage
 	float valueB = sumB / countIncluded;
 	
 	// Update the output image
-	int numberOfValuesInEachRow = imageOut->x; // R, G and B
+	int numberOfValuesInEachRow = output->x; // R, G and B
 	int offsetOfThePixel = (numberOfValuesInEachRow * senterY + senterX);
 	output->data[offsetOfThePixel].red = valueR;
 	output->data[offsetOfThePixel].green = valueG;
