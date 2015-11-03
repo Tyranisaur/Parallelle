@@ -70,7 +70,7 @@ __global__ void performNewIdeaIterationGPU(AccurateImage * output, AccurateImage
  }
 
 // Finalization function assumes allocated pointers
-__global__ void performNewIdeaFinalizationGPU( AccuarateImage * smallImage, AccurateImage * bigImage, PPMImage * outputImage)
+__global__ void performNewIdeaFinalizationGPU( AccurateImage * smallImage, AccurateImage * bigImage, PPMImage * outputImage)
 {
 	int index = blockIdx.x * blockDim-x + threadIdx.x;
 
