@@ -123,7 +123,11 @@ __global__ void performNewIdeaFinalizationGPU( AccurateImage * smallImage, Accur
 //conversion function takes in allocated pointers and fills in output pointer
 __global__ void convertImageToNewFormatGPU( PPMImage * inputImage, AccurateImage * outputImage )
 {
-	int index = blockIdx.x * blockDim.x + threadIdx.x;
+	int index =  threadIdx.x;
+			  +  blockIdx.x * blockDim.x
+			  +  blockIdx.y * blockDim.x * blockDim.y 
+			  +  blockIdx.z * blockDim.x * blockDim.y * blockDim.z;
+			  
 	outputImage->data[index].red   = (float) inputImage->data[index].red;
 	outputImage->data[index].green = (float) inputImage->data[index].green;
 	outputImage->data[index].blue  = (float) inputImage->data[index].blue;
@@ -164,7 +168,12 @@ int main(int argc, char** argv) {
 	gpuUnchanged = (AccurateImage *) malloc(sizeof(AccurateImage));
 	cudaMalloc((void**) &(gpuUnchanged->data), sizeof(AccuratePixel) * x * y);
 	printf("6\n");
-	convertImageToNewFormatGPU<<<y, x>>>(gpuImage, gpuUnchanged);
+	dim3 gridBlock;
+	gridBlock.x = 30;
+	gridBlock.y = 40;
+	gridBlock.z = 60;
+	
+	convertImageToNewFormatGPU<<<gridBlock, 32>>>(gpuImage, gpuUnchanged);
 	printf("%s\n", cudaGetErrorString(cudaGetLastError()));
 	printf("7\n");
 	cudaMalloc((void**) &gpuBuffer, sizeof(AccurateImage));
