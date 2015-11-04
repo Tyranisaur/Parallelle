@@ -147,7 +147,7 @@ int main(int argc, char** argv) {
 	int x, y;
 	x = image->x;
 	y = image->y;
-
+	printf("x = %d, y = %d\n", x, y);
 	cudaMalloc((void**) &gpuImage, sizeof(PPMImage));
 	printf("0\n");
 	gpuImage = (PPMImage*)malloc(sizeof(PPMImage));
