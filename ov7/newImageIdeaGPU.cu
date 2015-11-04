@@ -167,13 +167,14 @@ int main(int argc, char** argv) {
 	
 	printf("1\n");
 	
-	cudaMemcpy(&(gpuImage->y), &(image->y), sizeof(int), cudaMemcpyHostToDevice);
-	printf("%s\n", cudaGetErrorString(cudaGetLastError()));
+	//cudaMemcpy(&(gpuImage->y), &(image->y), sizeof(int), cudaMemcpyHostToDevice);
+	//printf("%s\n", cudaGetErrorString(cudaGetLastError()));
 	
 	printf("2\n");
-	
+	gpuImage->x = image->x;
+	gpuImage->y = image->y;
 	//cudaMemcpy(gpuImage, image, sizeof(PPMImage), cudaMemcpyHostToDevice);
-	printf("%s\n", cudaGetErrorString(cudaGetLastError()));
+	//printf("%s\n", cudaGetErrorString(cudaGetLastError()));
 	
 	printf("3\n");
 	
