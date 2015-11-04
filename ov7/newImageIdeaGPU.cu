@@ -123,7 +123,7 @@ __global__ void performNewIdeaFinalizationGPU( AccurateImage * smallImage, Accur
 //conversion function takes in allocated pointers and fills in output pointer
 __global__ void convertImageToNewFormatGPU( PPMImage * inputImage, AccurateImage * outputImage )
 {
-	int index =  threadIdx.x;
+	int index =  threadIdx.x
 			  +  blockIdx.x * blockDim.x
 			  +  blockIdx.y * blockDim.x * blockDim.y 
 			  +  blockIdx.z * blockDim.x * blockDim.y * blockDim.z;
