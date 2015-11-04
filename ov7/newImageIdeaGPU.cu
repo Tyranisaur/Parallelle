@@ -150,7 +150,7 @@ int main(int argc, char** argv) {
 
 	cudaMalloc((void**) &gpuImage, sizeof(PPMImage));
 	printf("0\n");
-	gpuImage = malloc(sizeof(PPMIMage));
+	gpuImage = (PPMImage*)malloc(sizeof(PPMImage));
 	cudaMalloc((void**) &(gpuImage->data), sizeof(PPMPixel) * x * y);
 	printf("%s\n", cudaGetErrorString(cudaGetLastError()));
 	printf("2\n");
