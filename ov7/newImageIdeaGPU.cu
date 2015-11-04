@@ -152,7 +152,6 @@ int main(int argc, char** argv) {
 	printf("0\n");
 	gpuImage = (PPMImage*)malloc(sizeof(PPMImage));
 	cudaMalloc((void**) &(gpuImage->data), sizeof(PPMPixel) * x * y);
-	printf("%s\n", cudaGetErrorString(cudaGetLastError()));
 	printf("1\n");
 	cudaMemcpy(&(gpuImage->y), &(image->y), sizeof(int), cudaMemcpyHostToDevice);
 	printf("2\n");
@@ -166,6 +165,7 @@ int main(int argc, char** argv) {
 	cudaMalloc((void**) &(gpuUnchanged->data), sizeof(AccuratePixel) * x * y);
 	printf("6\n");
 	convertImageToNewFormatGPU<<<y, x>>>(gpuImage, gpuUnchanged);
+	printf("%s\n", cudaGetErrorString(cudaGetLastError()));
 	printf("7\n");
 	cudaMalloc((void**) &gpuBuffer, sizeof(AccurateImage));
 	cudaMemcpy((void*) &(gpuBuffer->x), &x, sizeof(int), cudaMemcpyHostToDevice);
