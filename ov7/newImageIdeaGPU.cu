@@ -141,6 +141,8 @@ int main(int argc, char** argv) {
 	PPMImage *image;
 	PPMImage * gpuImage, *gpuOutImage;
 	AccurateImage * gpuUnchanged, *gpuSmall, *gpuBig, *gpuBuffer;
+	PPMPixel * ppmPixelPtr;
+	AccuratePixel * accuratePixelPtr;
 	int* gpuFilter;
     int * filter = (int*)malloc(sizeof(int));
 	if(argc > 1) {
@@ -159,36 +161,30 @@ int main(int argc, char** argv) {
 	printf("%s\n", cudaGetErrorString(cudaGetLastError()));
 	
 	printf("0\n");
-	
-	//gpuImage = (PPMImage*)malloc(sizeof(PPMImage));
-	
-	cudaMalloc((void**) &(gpuImage->data), sizeof(PPMPixel) * x * y);
+	cudaMalloc((void**) &ppmPixelPtr, sizeof(PPMPixel) * x * y);
 	printf("%s\n", cudaGetErrorString(cudaGetLastError()));
 	
 	printf("1\n");
 	
-	//cudaMemcpy(&(gpuImage->y), &(image->y), sizeof(int), cudaMemcpyHostToDevice);
-	//printf("%s\n", cudaGetErrorString(cudaGetLastError()));
+	cudaMemcpy(&(gpuImage->data), &ppmPixelPtr, sizeof(PPMPixel*), cudaMemcpyHostToDevice);
+	printf("%s\n", cudaGetErrorString(cudaGetLastError()));
 	
 	printf("2\n");
-	gpuImage->x = image->x;
-	gpuImage->y = image->y;
-	//cudaMemcpy(gpuImage, image, sizeof(PPMImage), cudaMemcpyHostToDevice);
-	//printf("%s\n", cudaGetErrorString(cudaGetLastError()));
+	cudaMemcpy(ppmPixelPtr, image->data, sizeof(PPMPixel) * x * y, cudaMemcpyHostToDevice);
+	printf("%s\n", cudaGetErrorString(cudaGetLastError()));
 	
 	printf("3\n");
 	
-	cudaMemcpy(gpuImage->data, image->data, sizeof(PPMPixel) * x * y, cudaMemcpyHostToDevice);
+	cudaMemcpy(&(gpuImage->x), &(image->x), sizeof(int), cudaMemcpyHostToDevice);
 	printf("%s\n", cudaGetErrorString(cudaGetLastError()));
 	
 	printf("4\n");
-	
 	cudaMalloc((void**) &gpuUnchanged, sizeof(AccurateImage));
 	printf("%s\n", cudaGetErrorString(cudaGetLastError()));
 	
+	
 	printf("5\n");
 	
-	gpuUnchanged = (AccurateImage *) malloc(sizeof(AccurateImage));
 	
 	cudaMalloc((void**) &(gpuUnchanged->data), sizeof(AccuratePixel) * x * y);
 	printf("%s\n", cudaGetErrorString(cudaGetLastError()));
