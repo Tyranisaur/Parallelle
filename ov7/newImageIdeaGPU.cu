@@ -172,7 +172,7 @@ int main(int argc, char** argv) {
 	gridBlock.x = 30;
 	gridBlock.y = 40;
 	gridBlock.z = 60;
-	
+	printf("%s\n", cudaGetErrorString(cudaGetLastError()));
 	convertImageToNewFormatGPU<<<gridBlock, 32>>>(gpuImage, gpuUnchanged);
 	printf("%s\n", cudaGetErrorString(cudaGetLastError()));
 	printf("7\n");
