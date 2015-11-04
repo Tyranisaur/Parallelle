@@ -149,39 +149,63 @@ int main(int argc, char** argv) {
 		image = readStreamPPM(stdin);
 	}
 	int x, y;
+	
 	x = image->x;
 	y = image->y;
+	
 	printf("x = %d, y = %d\n", x, y);
+	
 	cudaMalloc((void**) &gpuImage, sizeof(PPMImage));
 	printf("%s\n", cudaGetErrorString(cudaGetLastError()));
+	
 	printf("0\n");
+	
 	gpuImage = (PPMImage*)malloc(sizeof(PPMImage));
+	
 	cudaMalloc((void**) &(gpuImage->data), sizeof(PPMPixel) * x * y);
 	printf("%s\n", cudaGetErrorString(cudaGetLastError()));
+	
 	printf("1\n");
+	
 	cudaMemcpy(&(gpuImage->y), &(image->y), sizeof(int), cudaMemcpyHostToDevice);
 	printf("%s\n", cudaGetErrorString(cudaGetLastError()));
+	
 	printf("2\n");
+	
 	//cudaMemcpy(gpuImage, image, sizeof(PPMImage), cudaMemcpyHostToDevice);
 	printf("%s\n", cudaGetErrorString(cudaGetLastError()));
+	
 	printf("3\n");
+	
 	cudaMemcpy(gpuImage->data, image->data, sizeof(PPMPixel) * x * y, cudaMemcpyHostToDevice);
 	printf("%s\n", cudaGetErrorString(cudaGetLastError()));
+	
 	printf("4\n");
+	
 	cudaMalloc((void**) &gpuUnchanged, sizeof(AccurateImage));
 	printf("%s\n", cudaGetErrorString(cudaGetLastError()));
+	
 	printf("5\n");
+	
 	gpuUnchanged = (AccurateImage *) malloc(sizeof(AccurateImage));
+	
 	cudaMalloc((void**) &(gpuUnchanged->data), sizeof(AccuratePixel) * x * y);
 	printf("%s\n", cudaGetErrorString(cudaGetLastError()));
+	
 	printf("6\n");
+	
 	dim3 gridBlock;
-	gridBlock.x = 30;
+	gridBlock.x = 60;
 	gridBlock.y = 40;
-	gridBlock.z = 60;
+	gridBlock.z = 30;
+	
 	convertImageToNewFormatGPU<<<gridBlock, 32>>>(gpuImage, gpuUnchanged);
 	printf("%s\n", cudaGetErrorString(cudaGetLastError()));
+	
 	printf("7\n");
+	
+	
+	
 	cudaMalloc((void**) &gpuBuffer, sizeof(AccurateImage));
 	cudaMemcpy((void*) &(gpuBuffer->x), &x, sizeof(int), cudaMemcpyHostToDevice);
 	cudaMemcpy((void*) &(gpuBuffer->y), &y, sizeof(int), cudaMemcpyHostToDevice);
