@@ -78,16 +78,17 @@ void performNewIdeaIteration(AccurateImage *imageOut, AccurateImage *imageIn,int
 				senterY < threadID * workPerThread + workPerThread;
 				senterY++)
 		{
+			printf("%d\t%d\n", threadID, senterY);
 			// first and last line considered  by the computation of the pixel in the line senterY
-			int starty = senterY-size;
-			int endy = senterY+size;
+			int starty = senterY - size;
+			int endy = senterY + size;
 
 			// Initialize and update the line_buffer.
 			// For OpenMP this might cause problems
 			// Separating out the initialization part might help
 
 
-			// top line
+			// top lines
 			// happens for only one thread
 			if (starty <=0){
 				starty = 0;
