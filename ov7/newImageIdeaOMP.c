@@ -78,7 +78,6 @@ void performNewIdeaIteration(AccurateImage *imageOut, AccurateImage *imageIn,int
 				senterY < threadID * workPerThread + workPerThread;
 				senterY++)
 		{
-			printf("%d\t%d\n", threadID, senterY);
 			// first and last line considered  by the computation of the pixel in the line senterY
 			int starty = senterY - size;
 			int endy = senterY + size;
@@ -128,6 +127,7 @@ void performNewIdeaIteration(AccurateImage *imageOut, AccurateImage *imageIn,int
 				// happens for all but one of the threads
 				if(senterY == threadID * workPerThread)
 				{
+					printf("first line of thread %d\n", threadID);
 					for(int line_y=starty; line_y < endy; line_y++){
 						for(int i=0; i<imageIn->x; i++){
 							line_buffer[i].blue+=imageIn->data[numberOfValuesInEachRow*line_y+i].blue;
