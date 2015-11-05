@@ -146,7 +146,7 @@ __global__ void convertImageToNewFormatGPU( PPMImage * inputImage, AccurateImage
 int main(int argc, char** argv) {
 	
 	PPMImage *image;
-	PPMImage * gpuImage, *gpuOutImage;
+	PPMImage * gpuImage;
 	AccurateImage * gpuUnchanged, *gpuSmall, *gpuBig, *gpuBuffer;
 	PPMPixel * ppmPixelPtr;
 	AccuratePixel * accuratePixelPtr;
@@ -155,7 +155,7 @@ int main(int argc, char** argv) {
 	gridBlock.y = 40;
 	gridBlock.z = 30;
 	int* gpuFilter;
-    int * filter = (int*)malloc(sizeof(int));
+    int filter;
 	if(argc > 1) {
 		image = readPPM("flower.ppm");
 	} else {
@@ -193,7 +193,7 @@ int main(int argc, char** argv) {
 	convertImageToNewFormatGPU<<<gridBlock, 32>>>(gpuImage, gpuUnchanged);
 	
 	
-	
+	//Allocate a couple more structs on device
 	cudaMalloc((void**) &gpuBuffer, sizeof(AccurateImage));
 	cudaMalloc((void**) &(accuratePixelPtr), sizeof(AccuratePixel) * x * y);
 	cudaMemcpy(&(gpuBuffer->data), &accuratePixelPtr, sizeof(AccuratePixel*), cudaMemcpyHostToDevice);
@@ -215,16 +215,11 @@ int main(int argc, char** argv) {
 	cudaMemcpy(&(gpuBig->x), &x, sizeof(int), cudaMemcpyHostToDevice);
 	
 	
-	cudaMalloc((void**) &gpuOutImage, sizeof(PPMImage));
-	cudaMalloc((void**) &(ppmPixelPtr), sizeof(PPMPixel) * x * y);
-	cudaMemcpy(&(gpuOutImage->data), &ppmPixelPtr, sizeof(PPMPixel*), cudaMemcpyHostToDevice);
-	cudaMemcpy(&(gpuOutImage->y), &y, sizeof(int), cudaMemcpyHostToDevice);
-	cudaMemcpy(&(gpuOutImage->x), &x, sizeof(int), cudaMemcpyHostToDevice);
 	
 	
 	cudaMalloc((void**) &gpuFilter, sizeof(int));
-	*filter = 2;
-	cudaMemcpy(gpuFilter, filter, sizeof(int), cudaMemcpyHostToDevice);
+	filter = 2;
+	cudaMemcpy(gpuFilter, &filter, sizeof(int), cudaMemcpyHostToDevice);
 
 	performNewIdeaIterationGPU<<<gridBlock, 32>>>(gpuSmall, gpuUnchanged, gpuFilter);
 	performNewIdeaIterationGPU<<<gridBlock, 32>>>(gpuBuffer, gpuSmall, gpuFilter);
@@ -232,8 +227,8 @@ int main(int argc, char** argv) {
 	performNewIdeaIterationGPU<<<gridBlock, 32>>>(gpuBuffer, gpuSmall, gpuFilter);
 	performNewIdeaIterationGPU<<<gridBlock, 32>>>(gpuSmall, gpuBuffer, gpuFilter);
 	
-	*filter = 3;
-	cudaMemcpy(gpuFilter, filter, sizeof(int), cudaMemcpyHostToDevice);
+	filter = 3;
+	cudaMemcpy(gpuFilter, &filter, sizeof(int), cudaMemcpyHostToDevice);
 	
 	performNewIdeaIterationGPU<<<gridBlock, 32>>>(gpuBig, gpuUnchanged, gpuFilter);
 	performNewIdeaIterationGPU<<<gridBlock, 32>>>(gpuBuffer, gpuBig, gpuFilter);
@@ -242,9 +237,9 @@ int main(int argc, char** argv) {
 	performNewIdeaIterationGPU<<<gridBlock, 32>>>(gpuBig, gpuBuffer, gpuFilter);
 	
 	
-	performNewIdeaFinalizationGPU<<<gridBlock, 32>>>(gpuSmall, gpuBig, gpuOutImage);
+	performNewIdeaFinalizationGPU<<<gridBlock, 32>>>(gpuSmall, gpuBig, gpuImage);
 	
-	cudaMemcpy(&ppmPixelPtr, &(gpuOutImage->data), sizeof(PPMPixel*) , cudaMemcpyDeviceToHost);
+	cudaMemcpy(&ppmPixelPtr, &(gpuImage->data), sizeof(PPMPixel*) , cudaMemcpyDeviceToHost);
 	cudaMemcpy(image->data, ppmPixelPtr, sizeof(PPMPixel) * x * y, cudaMemcpyDeviceToHost);
 
 
@@ -254,8 +249,8 @@ int main(int argc, char** argv) {
 		writeStreamPPM(stdout, image);
 	}
 
-	*filter = 5;
-	cudaMemcpy(gpuFilter, filter, sizeof(int), cudaMemcpyHostToDevice);
+	filter = 5;
+	cudaMemcpy(gpuFilter, &filter, sizeof(int), cudaMemcpyHostToDevice);
 	
 	performNewIdeaIterationGPU<<<gridBlock, 32>>>(gpuSmall, gpuUnchanged, gpuFilter);
 	performNewIdeaIterationGPU<<<gridBlock, 32>>>(gpuBuffer, gpuSmall, gpuFilter);
@@ -263,9 +258,9 @@ int main(int argc, char** argv) {
 	performNewIdeaIterationGPU<<<gridBlock, 32>>>(gpuBuffer, gpuSmall, gpuFilter);
 	performNewIdeaIterationGPU<<<gridBlock, 32>>>(gpuSmall, gpuBuffer, gpuFilter);
 	
-	performNewIdeaFinalizationGPU<<<gridBlock, 32>>>(gpuBig, gpuSmall, gpuOutImage);
+	performNewIdeaFinalizationGPU<<<gridBlock, 32>>>(gpuBig, gpuSmall, gpuImage);
 	
-	cudaMemcpy(&ppmPixelPtr, &(gpuOutImage->data), sizeof(PPMPixel*) , cudaMemcpyDeviceToHost);
+	cudaMemcpy(&ppmPixelPtr, &(gpuImage->data), sizeof(PPMPixel*) , cudaMemcpyDeviceToHost);
 	cudaMemcpy(image->data, ppmPixelPtr, sizeof(PPMPixel) * x * y, cudaMemcpyDeviceToHost);
 
 	if(argc > 1) {
@@ -274,8 +269,8 @@ int main(int argc, char** argv) {
 		writeStreamPPM(stdout, image);
 	}
 	
-	*filter = 8;
-	cudaMemcpy(gpuFilter, filter, sizeof(int), cudaMemcpyHostToDevice);
+	filter = 8;
+	cudaMemcpy(gpuFilter, &filter, sizeof(int), cudaMemcpyHostToDevice);
 
 	performNewIdeaIterationGPU<<<gridBlock, 32>>>(gpuBig, gpuUnchanged, gpuFilter);
 	performNewIdeaIterationGPU<<<gridBlock, 32>>>(gpuBuffer, gpuBig, gpuFilter);
@@ -283,9 +278,9 @@ int main(int argc, char** argv) {
 	performNewIdeaIterationGPU<<<gridBlock, 32>>>(gpuBuffer, gpuBig, gpuFilter);
 	performNewIdeaIterationGPU<<<gridBlock, 32>>>(gpuBig, gpuBuffer, gpuFilter);
 
-	performNewIdeaFinalizationGPU<<<gridBlock, 32>>>(gpuSmall, gpuBig, gpuOutImage);
+	performNewIdeaFinalizationGPU<<<gridBlock, 32>>>(gpuSmall, gpuBig, gpuImage);
 	
-	cudaMemcpy(&ppmPixelPtr, &(gpuOutImage->data), sizeof(PPMPixel*) , cudaMemcpyDeviceToHost);
+	cudaMemcpy(&ppmPixelPtr, &(gpuImage->data), sizeof(PPMPixel*) , cudaMemcpyDeviceToHost);
 	cudaMemcpy(image->data, ppmPixelPtr, sizeof(PPMPixel) * x * y, cudaMemcpyDeviceToHost);
 	
 	if(argc > 1) {
@@ -295,12 +290,23 @@ int main(int argc, char** argv) {
 	}
 
 	cudaFree(gpuFilter);
-	printf("this is supposed to happen\n");
-	cudaFree(gpuUnchanged->data);
-	printf("this is not supposed to happen\n");
-	cudaFree(gpuSmall->data);
-	cudaFree(gpuBig->data);
-	cudaFree(gpuBuffer->data);
+	
+	cudaMemcpy(&ppmPixelPtr, &(gpuImage->data), sizeof(PPMPixel*) , cudaMemcpyDeviceToHost);
+	cudaFree(ppmPixelPtr);
+	
+	cudaMemcpy(&accuratePixelPtr, &(gpuUnchanged->data), sizeof(AccuratePixel*) , cudaMemcpyDeviceToHost);
+	cudaFree(accuratePixelPtr);
+	
+	cudaMemcpy(&accuratePixelPtr, &(gpuSmall->data), sizeof(AccuratePixel*) , cudaMemcpyDeviceToHost);
+	cudaFree(accuratePixelPtr);
+
+	cudaMemcpy(&accuratePixelPtr, &(gpuBig->data), sizeof(AccuratePixel*) , cudaMemcpyDeviceToHost);
+	cudaFree(accuratePixelPtr);
+
+	cudaMemcpy(&accuratePixelPtr, &(gpuBuffer->data), sizeof(AccuratePixel*) , cudaMemcpyDeviceToHost);
+	cudaFree(accuratePixelPtr);
+	
+	cudaFree(gpuImage);
 	cudaFree(gpuUnchanged);
 	cudaFree(gpuSmall);
 	cudaFree(gpuBig);
@@ -309,7 +315,6 @@ int main(int argc, char** argv) {
 	
 	free(image->data);
 	free(image);
-	free(filter);
 	return 0;
 }
 
