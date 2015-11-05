@@ -243,12 +243,10 @@ int main(int argc, char** argv) {
 	
 	
 	performNewIdeaFinalizationGPU<<<gridBlock, 32>>>(gpuSmall, gpuBig, gpuOutImage);
-	printf("this is supposed to happen\n");
-	//TODO ------------------------------------------------------------------------------------------------
-	//TODO ------------------------------------------------------------------------------------------------
-	//TODO ------------------------------------------------------------------------------------------------
-	cudaMemcpy(image->data, gpuOutImage->data, sizeof(PPMPixel) * x * y, cudaMemcpyDeviceToHost);
-	printf("this is not supposed to happen\n");
+	
+	cudaMemcpy(&ppmPixelPtr, &(gpuOutImage->data), sizeof(PPMPixel*) , cudaMemcpyDeviceToHost);
+	cudaMemcpy(image->data, ppmPixelPtr, sizeof(PPMPixel) * x * y, cudaMemcpyDeviceToHost);
+
 
 	if(argc > 1) {
 		writePPM("flower_tiny.ppm", image);
@@ -266,7 +264,9 @@ int main(int argc, char** argv) {
 	performNewIdeaIterationGPU<<<gridBlock, 32>>>(gpuSmall, gpuBuffer, gpuFilter);
 	
 	performNewIdeaFinalizationGPU<<<gridBlock, 32>>>(gpuBig, gpuSmall, gpuOutImage);
-	cudaMemcpy(image->data, gpuOutImage->data, sizeof(PPMPixel) * x * y, cudaMemcpyDeviceToHost);
+	
+	cudaMemcpy(&ppmPixelPtr, &(gpuOutImage->data), sizeof(PPMPixel*) , cudaMemcpyDeviceToHost);
+	cudaMemcpy(image->data, ppmPixelPtr, sizeof(PPMPixel) * x * y, cudaMemcpyDeviceToHost);
 
 	if(argc > 1) {
 		writePPM("flower_small.ppm", image);
@@ -284,7 +284,9 @@ int main(int argc, char** argv) {
 	performNewIdeaIterationGPU<<<gridBlock, 32>>>(gpuBig, gpuBuffer, gpuFilter);
 
 	performNewIdeaFinalizationGPU<<<gridBlock, 32>>>(gpuSmall, gpuBig, gpuOutImage);
-	cudaMemcpy(image->data, gpuOutImage->data, sizeof(PPMPixel) * x * y, cudaMemcpyDeviceToHost);
+	
+	cudaMemcpy(&ppmPixelPtr, &(gpuOutImage->data), sizeof(PPMPixel*) , cudaMemcpyDeviceToHost);
+	cudaMemcpy(image->data, ppmPixelPtr, sizeof(PPMPixel) * x * y, cudaMemcpyDeviceToHost);
 	
 	if(argc > 1) {
 		writePPM("flower_medium.ppm", image);
@@ -293,7 +295,9 @@ int main(int argc, char** argv) {
 	}
 
 	cudaFree(gpuFilter);
+	printf("this is supposed to happen\n");
 	cudaFree(gpuUnchanged->data);
+	printf("this is not supposed to happen\n");
 	cudaFree(gpuSmall->data);
 	cudaFree(gpuBig->data);
 	cudaFree(gpuBuffer->data);
