@@ -18,8 +18,12 @@ typedef struct {
 
 __global__ void performNewIdeaIterationGPU(AccurateImage * output, AccurateImage * input, int * size )
  {
-	int senterY = blockIdx.x;
-	int senterX = threadIdx.x;
+			  		  
+	int senterY = blockIdx.y
+				+ blockIdx.z * gridDim.y;
+	
+	int senterX = threadIdx.x
+				+ blockIdx.x * blockDim.x;
 	
 	float sumR = 0;
 	float sumG = 0;
@@ -72,7 +76,10 @@ __global__ void performNewIdeaIterationGPU(AccurateImage * output, AccurateImage
 // Finalization function assumes allocated pointers
 __global__ void performNewIdeaFinalizationGPU( AccurateImage * smallImage, AccurateImage * bigImage, PPMImage * outputImage)
 {
-	int index = blockIdx.x * blockDim.x + threadIdx.x;
+	int index =  threadIdx.x
+			  +  blockIdx.x * blockDim.x
+			  +  blockIdx.y * blockDim.x * gridDim.x 
+			  +  blockIdx.z * blockDim.x * gridDim.x * gridDim.y;
 
 	float value = (bigImage->data[index].red - smallImage->data[index].red);
 		if(value > 255.0f)
@@ -125,8 +132,8 @@ __global__ void convertImageToNewFormatGPU( PPMImage * inputImage, AccurateImage
 {
 	int index =  threadIdx.x
 			  +  blockIdx.x * blockDim.x
-			  +  blockIdx.y * blockDim.x * blockDim.y 
-			  +  blockIdx.z * blockDim.x * blockDim.y * blockDim.z;
+			  +  blockIdx.y * blockDim.x * gridDim.x 
+			  +  blockIdx.z * blockDim.x * gridDim.x * gridDim.y;
 			  
 	outputImage->data[index].red   = (float) inputImage->data[index].red;
 	outputImage->data[index].green = (float) inputImage->data[index].green;
@@ -143,6 +150,10 @@ int main(int argc, char** argv) {
 	AccurateImage * gpuUnchanged, *gpuSmall, *gpuBig, *gpuBuffer;
 	PPMPixel * ppmPixelPtr;
 	AccuratePixel * accuratePixelPtr;
+	dim3 gridBlock;
+	gridBlock.x = 60;
+	gridBlock.y = 40;
+	gridBlock.z = 30;
 	int* gpuFilter;
     int * filter = (int*)malloc(sizeof(int));
 	if(argc > 1) {
@@ -150,117 +161,92 @@ int main(int argc, char** argv) {
 	} else {
 		image = readStreamPPM(stdin);
 	}
+	//Image dimmensions are constant, store these here instead of looking up in some struct every time
 	int x, y;
-	
 	x = image->x;
 	y = image->y;
-	
-	printf("x = %d, y = %d\n", x, y);
-	
+
+	//Allocate struct for on device
 	cudaMalloc((void**) &gpuImage, sizeof(PPMImage));
-	printf("%s\n", cudaGetErrorString(cudaGetLastError()));
 	
-	printf("0\n");
+	//Allocate memory for array on device
 	cudaMalloc((void**) &ppmPixelPtr, sizeof(PPMPixel) * x * y);
-	printf("%s\n", cudaGetErrorString(cudaGetLastError()));
-	
-	printf("1\n");
-	
+
+	//Copy address of allocated array to device
 	cudaMemcpy(&(gpuImage->data), &ppmPixelPtr, sizeof(PPMPixel*), cudaMemcpyHostToDevice);
-	printf("%s\n", cudaGetErrorString(cudaGetLastError()));
-	
-	printf("2\n");
+
+	//Copy array to address previously copied
 	cudaMemcpy(ppmPixelPtr, image->data, sizeof(PPMPixel) * x * y, cudaMemcpyHostToDevice);
-	printf("%s\n", cudaGetErrorString(cudaGetLastError()));
-	
-	printf("3\n");
-	
-	cudaMemcpy(&(gpuImage->x), &(image->x), sizeof(int), cudaMemcpyHostToDevice);
-	printf("%s\n", cudaGetErrorString(cudaGetLastError()));
-	
-	printf("4\n");
-	cudaMemcpy(&(gpuImage->y), &(image->y), sizeof(int), cudaMemcpyHostToDevice);
-	printf("%s\n", cudaGetErrorString(cudaGetLastError()));
-	
-	printf("5\n");
-	
+
+	//Copy int values
+	cudaMemcpy(&(gpuImage->x), &x, sizeof(int), cudaMemcpyHostToDevice);
+	cudaMemcpy(&(gpuImage->y), &y, sizeof(int), cudaMemcpyHostToDevice);
+
+	//Allocate and copy values for unchanged struct with new format
 	cudaMalloc((void**) &gpuUnchanged, sizeof(AccurateImage));
-	printf("%s\n", cudaGetErrorString(cudaGetLastError()));
-	
-	
 	cudaMalloc((void**) &(accuratePixelPtr), sizeof(AccuratePixel) * x * y);
-	printf("%s\n", cudaGetErrorString(cudaGetLastError()));
-	
-	printf("6\n");
-	
 	cudaMemcpy(&(gpuUnchanged->data), &accuratePixelPtr, sizeof(AccuratePixel*), cudaMemcpyHostToDevice);
-	printf("%s\n", cudaGetErrorString(cudaGetLastError()));
+	cudaMemcpy(&(gpuUnchanged->y), &y, sizeof(int), cudaMemcpyHostToDevice);
+	cudaMemcpy(&(gpuUnchanged->x), &x, sizeof(int), cudaMemcpyHostToDevice);
 	
-	printf("7\n");
-	
-	cudaMemcpy(&(gpuUnchanged->y), &(image->y), sizeof(int), cudaMemcpyHostToDevice);
-	printf("%s\n", cudaGetErrorString(cudaGetLastError()));
-	
-	printf("8\n");
-	
-	cudaMemcpy(&(gpuUnchanged->x), &(image->x), sizeof(int), cudaMemcpyHostToDevice);
-	printf("%s\n", cudaGetErrorString(cudaGetLastError()));
-	
-	
-	dim3 gridBlock;
-	gridBlock.x = 60;
-	gridBlock.y = 40;
-	gridBlock.z = 30;
-	
-	printf("9\n");
-	
+	//Call kernel to fill in the values of unchanged struct
 	convertImageToNewFormatGPU<<<gridBlock, 32>>>(gpuImage, gpuUnchanged);
-	printf("%s\n", cudaGetErrorString(cudaGetLastError()));
-	printf("10\n");
 	
 	
 	
 	cudaMalloc((void**) &gpuBuffer, sizeof(AccurateImage));
-	cudaMemcpy((void*) &(gpuBuffer->x), &x, sizeof(int), cudaMemcpyHostToDevice);
-	cudaMemcpy((void*) &(gpuBuffer->y), &y, sizeof(int), cudaMemcpyHostToDevice);
-	cudaMalloc((void**) &(gpuBuffer->data), sizeof(AccuratePixel) * x * y);
+	cudaMalloc((void**) &(accuratePixelPtr), sizeof(AccuratePixel) * x * y);
+	cudaMemcpy(&(gpuBuffer->data), &accuratePixelPtr, sizeof(AccuratePixel*), cudaMemcpyHostToDevice);
+	cudaMemcpy(&(gpuBuffer->y), &y, sizeof(int), cudaMemcpyHostToDevice);
+	cudaMemcpy(&(gpuBuffer->x), &x, sizeof(int), cudaMemcpyHostToDevice);
+	
 	
 	cudaMalloc((void**) &gpuSmall, sizeof(AccurateImage));
-	cudaMemcpy((void*) &(gpuSmall->x), &x, sizeof(int), cudaMemcpyHostToDevice);
-	cudaMemcpy((void*) &(gpuSmall->y), &y, sizeof(int), cudaMemcpyHostToDevice);
-	cudaMalloc((void**) &(gpuSmall->data), sizeof(AccuratePixel) * x * y);
+	cudaMalloc((void**) &(accuratePixelPtr), sizeof(AccuratePixel) * x * y);
+	cudaMemcpy(&(gpuSmall->data), &accuratePixelPtr, sizeof(AccuratePixel*), cudaMemcpyHostToDevice);
+	cudaMemcpy(&(gpuSmall->y), &y, sizeof(int), cudaMemcpyHostToDevice);
+	cudaMemcpy(&(gpuSmall->x), &x, sizeof(int), cudaMemcpyHostToDevice);
+	
 	
 	cudaMalloc((void**) &gpuBig, sizeof(AccurateImage));
-	cudaMemcpy((void*) &(gpuBig->x), &x, sizeof(int), cudaMemcpyHostToDevice);
-	cudaMemcpy((void*) &(gpuBig->y), &y, sizeof(int), cudaMemcpyHostToDevice);
-	cudaMalloc((void**) &(gpuBig->data), sizeof(AccuratePixel) * x * y);
+	cudaMalloc((void**) &(accuratePixelPtr), sizeof(AccuratePixel) * x * y);
+	cudaMemcpy(&(gpuBig->data), &accuratePixelPtr, sizeof(AccuratePixel*), cudaMemcpyHostToDevice);
+	cudaMemcpy(&(gpuBig->y), &y, sizeof(int), cudaMemcpyHostToDevice);
+	cudaMemcpy(&(gpuBig->x), &x, sizeof(int), cudaMemcpyHostToDevice);
+	
 	
 	cudaMalloc((void**) &gpuOutImage, sizeof(PPMImage));
-	cudaMemcpy((void*) &(gpuOutImage->x), &x, sizeof(int), cudaMemcpyHostToDevice);
-	cudaMemcpy((void*) &(gpuOutImage->y), &y, sizeof(int), cudaMemcpyHostToDevice);
-	cudaMalloc((void**) &(gpuOutImage->data), sizeof(PPMImage) * x * y);
-
+	cudaMalloc((void**) &(ppmPixelPtr), sizeof(PPMPixel) * x * y);
+	cudaMemcpy(&(gpuOutImage->data), &ppmPixelPtr, sizeof(PPMPixel*), cudaMemcpyHostToDevice);
+	cudaMemcpy(&(gpuOutImage->y), &y, sizeof(int), cudaMemcpyHostToDevice);
+	cudaMemcpy(&(gpuOutImage->x), &x, sizeof(int), cudaMemcpyHostToDevice);
+	
+	
 	cudaMalloc((void**) &gpuFilter, sizeof(int));
 	*filter = 2;
-	cudaMemcpy((void**)&gpuFilter, &filter, sizeof(int), cudaMemcpyHostToDevice);
+	cudaMemcpy(gpuFilter, filter, sizeof(int), cudaMemcpyHostToDevice);
 
-	performNewIdeaIterationGPU<<<y, x>>>(gpuSmall, gpuUnchanged, gpuFilter);
-	performNewIdeaIterationGPU<<<y, x>>>(gpuBuffer, gpuSmall, gpuFilter);
-	performNewIdeaIterationGPU<<<y, x>>>(gpuSmall, gpuBuffer, gpuFilter);
-	performNewIdeaIterationGPU<<<y, x>>>(gpuBuffer, gpuSmall, gpuFilter);
-	performNewIdeaIterationGPU<<<y, x>>>(gpuSmall, gpuBuffer, gpuFilter);
+	performNewIdeaIterationGPU<<<gridBlock, 32>>>(gpuSmall, gpuUnchanged, gpuFilter);
+	performNewIdeaIterationGPU<<<gridBlock, 32>>>(gpuBuffer, gpuSmall, gpuFilter);
+	performNewIdeaIterationGPU<<<gridBlock, 32>>>(gpuSmall, gpuBuffer, gpuFilter);
+	performNewIdeaIterationGPU<<<gridBlock, 32>>>(gpuBuffer, gpuSmall, gpuFilter);
+	performNewIdeaIterationGPU<<<gridBlock, 32>>>(gpuSmall, gpuBuffer, gpuFilter);
 	
 	*filter = 3;
-	cudaMemcpy((void**)&gpuFilter, &filter, sizeof(int), cudaMemcpyHostToDevice);
+	cudaMemcpy(gpuFilter, filter, sizeof(int), cudaMemcpyHostToDevice);
 	
-	performNewIdeaIterationGPU<<<y, x>>>(gpuBig, gpuUnchanged, gpuFilter);
-	performNewIdeaIterationGPU<<<y, x>>>(gpuBuffer, gpuBig, gpuFilter);
-	performNewIdeaIterationGPU<<<y, x>>>(gpuBig, gpuBuffer, gpuFilter);
-	performNewIdeaIterationGPU<<<y, x>>>(gpuBuffer, gpuBig, gpuFilter);
-	performNewIdeaIterationGPU<<<y, x>>>(gpuBig, gpuBuffer, gpuFilter);
+	performNewIdeaIterationGPU<<<gridBlock, 32>>>(gpuBig, gpuUnchanged, gpuFilter);
+	performNewIdeaIterationGPU<<<gridBlock, 32>>>(gpuBuffer, gpuBig, gpuFilter);
+	performNewIdeaIterationGPU<<<gridBlock, 32>>>(gpuBig, gpuBuffer, gpuFilter);
+	performNewIdeaIterationGPU<<<gridBlock, 32>>>(gpuBuffer, gpuBig, gpuFilter);
+	performNewIdeaIterationGPU<<<gridBlock, 32>>>(gpuBig, gpuBuffer, gpuFilter);
 	
 	
-	performNewIdeaFinalizationGPU<<<y, x>>>(gpuSmall, gpuBig, gpuOutImage);
+	performNewIdeaFinalizationGPU<<<gridBlock, 32>>>(gpuSmall, gpuBig, gpuOutImage);
+	
+	//TODO ------------------------------------------------------------------------------------------------
+	//TODO ------------------------------------------------------------------------------------------------
+	//TODO ------------------------------------------------------------------------------------------------
 	cudaMemcpy(image->data, gpuOutImage->data, sizeof(PPMPixel) * x * y, cudaMemcpyDeviceToHost);
 
 	if(argc > 1) {
@@ -270,15 +256,15 @@ int main(int argc, char** argv) {
 	}
 
 	*filter = 5;
-	cudaMemcpy((void**)&gpuFilter, &filter, sizeof(int), cudaMemcpyHostToDevice);
+	cudaMemcpy(gpuFilter, filter, sizeof(int), cudaMemcpyHostToDevice);
 	
-	performNewIdeaIterationGPU<<<y, x>>>(gpuSmall, gpuUnchanged, gpuFilter);
-	performNewIdeaIterationGPU<<<y, x>>>(gpuBuffer, gpuSmall, gpuFilter);
-	performNewIdeaIterationGPU<<<y, x>>>(gpuSmall, gpuBuffer, gpuFilter);
-	performNewIdeaIterationGPU<<<y, x>>>(gpuBuffer, gpuSmall, gpuFilter);
-	performNewIdeaIterationGPU<<<y, x>>>(gpuSmall, gpuBuffer, gpuFilter);
+	performNewIdeaIterationGPU<<<gridBlock, 32>>>(gpuSmall, gpuUnchanged, gpuFilter);
+	performNewIdeaIterationGPU<<<gridBlock, 32>>>(gpuBuffer, gpuSmall, gpuFilter);
+	performNewIdeaIterationGPU<<<gridBlock, 32>>>(gpuSmall, gpuBuffer, gpuFilter);
+	performNewIdeaIterationGPU<<<gridBlock, 32>>>(gpuBuffer, gpuSmall, gpuFilter);
+	performNewIdeaIterationGPU<<<gridBlock, 32>>>(gpuSmall, gpuBuffer, gpuFilter);
 	
-	performNewIdeaFinalizationGPU<<<y, x>>>(gpuBig, gpuSmall, gpuOutImage);
+	performNewIdeaFinalizationGPU<<<gridBlock, 32>>>(gpuBig, gpuSmall, gpuOutImage);
 	cudaMemcpy(image->data, gpuOutImage->data, sizeof(PPMPixel) * x * y, cudaMemcpyDeviceToHost);
 
 	if(argc > 1) {
@@ -288,15 +274,15 @@ int main(int argc, char** argv) {
 	}
 	
 	*filter = 8;
-	cudaMemcpy((void**)&gpuFilter, &filter, sizeof(int), cudaMemcpyHostToDevice);
+	cudaMemcpy(gpuFilter, filter, sizeof(int), cudaMemcpyHostToDevice);
 
-	performNewIdeaIterationGPU<<<y, x>>>(gpuBig, gpuUnchanged, gpuFilter);
-	performNewIdeaIterationGPU<<<y, x>>>(gpuBuffer, gpuBig, gpuFilter);
-	performNewIdeaIterationGPU<<<y, x>>>(gpuBig, gpuBuffer, gpuFilter);
-	performNewIdeaIterationGPU<<<y, x>>>(gpuBuffer, gpuBig, gpuFilter);
-	performNewIdeaIterationGPU<<<y, x>>>(gpuBig, gpuBuffer, gpuFilter);
+	performNewIdeaIterationGPU<<<gridBlock, 32>>>(gpuBig, gpuUnchanged, gpuFilter);
+	performNewIdeaIterationGPU<<<gridBlock, 32>>>(gpuBuffer, gpuBig, gpuFilter);
+	performNewIdeaIterationGPU<<<gridBlock, 32>>>(gpuBig, gpuBuffer, gpuFilter);
+	performNewIdeaIterationGPU<<<gridBlock, 32>>>(gpuBuffer, gpuBig, gpuFilter);
+	performNewIdeaIterationGPU<<<gridBlock, 32>>>(gpuBig, gpuBuffer, gpuFilter);
 
-	performNewIdeaFinalizationGPU<<<y, x>>>(gpuSmall, gpuBig, gpuOutImage);
+	performNewIdeaFinalizationGPU<<<gridBlock, 32>>>(gpuSmall, gpuBig, gpuOutImage);
 	cudaMemcpy(image->data, gpuOutImage->data, sizeof(PPMPixel) * x * y, cudaMemcpyDeviceToHost);
 	
 	if(argc > 1) {
