@@ -59,7 +59,6 @@ void freeImage(AccurateImage *image){
 // You may be able to do this only with a single OpenMP directive
 void performNewIdeaIteration(AccurateImage *imageOut, AccurateImage *imageIn,int size) {
 	int workPerThread = imageIn->y / NTHREADS;
-	printf("work per thread: %d\n", workPerThread);
 	int numberOfValuesInEachRow = imageIn->x;
 #	pragma omp parallel num_threads(NTHREADS)
 	{
@@ -125,11 +124,11 @@ void performNewIdeaIteration(AccurateImage *imageOut, AccurateImage *imageIn,int
 			else{
 
 				// first iteration we need to fill in the line buffer based on lines both above and below
-				// happens for all but one of the threads
+				// happens once for all but one of the threads
 				if(senterY == threadID * workPerThread)
 				{
 					printf("first line of thread %d\n", threadID);
-					for(int line_y=starty; line_y < endy; line_y++){
+					for(int line_y=starty; line_y <= endy; line_y++){
 						for(int i=0; i<imageIn->x; i++){
 							line_buffer[i].blue+=imageIn->data[numberOfValuesInEachRow*line_y+i].blue;
 							line_buffer[i].red+=imageIn->data[numberOfValuesInEachRow*line_y+i].red;
