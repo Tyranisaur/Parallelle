@@ -59,6 +59,8 @@ void freeImage(AccurateImage *image){
 // You may be able to do this only with a single OpenMP directive
 void performNewIdeaIteration(AccurateImage *imageOut, AccurateImage *imageIn,int size) {
 	int workPerThread = imageIn->y / NTHREADS;
+	printf("work per thread: %d\n", workPerThread);
+	int numberOfValuesInEachRow = imageIn->x;
 #	pragma omp parallel num_threads(NTHREADS)
 	{
 		int threadID = omp_get_thread_num();
@@ -67,7 +69,6 @@ void performNewIdeaIteration(AccurateImage *imageOut, AccurateImage *imageIn,int
 		float sum_red = 0;
 		float sum_blue = 0;
 		float sum_green =0;
-		int numberOfValuesInEachRow = imageIn->x;
 
 		// line buffer that will save the sum of some pixel in the column
 		AccuratePixel *line_buffer = (AccuratePixel*) malloc(imageIn->x*sizeof(AccuratePixel));
@@ -88,7 +89,7 @@ void performNewIdeaIteration(AccurateImage *imageOut, AccurateImage *imageIn,int
 
 
 			// top lines
-			// happens for only one thread
+			// happens for only first thread
 			if (starty <=0){
 				starty = 0;
 				if(senterY == 0){
@@ -112,7 +113,7 @@ void performNewIdeaIteration(AccurateImage *imageOut, AccurateImage *imageIn,int
 			}
 
 			// for the last lines, we just need to subtract the first added line
-			// happens for only one thread as well
+			// happens for only last thread
 			else if (endy >= imageIn->y ){
 				endy = imageIn->y-1;
 				for(int i=0; i<imageIn->x; i++){
