@@ -248,6 +248,7 @@ int main(int argc, char** argv) {
 	//TODO ------------------------------------------------------------------------------------------------
 	//TODO ------------------------------------------------------------------------------------------------
 	cudaMemcpy(image->data, gpuOutImage->data, sizeof(PPMPixel) * x * y, cudaMemcpyDeviceToHost);
+	printf("this is not supposed to happen\n");
 
 	if(argc > 1) {
 		writePPM("flower_tiny.ppm", image);
