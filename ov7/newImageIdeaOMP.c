@@ -127,7 +127,6 @@ void performNewIdeaIteration(AccurateImage *imageOut, AccurateImage *imageIn,int
 				// happens once for all but one of the threads
 				if(senterY == threadID * workPerThread)
 				{
-					printf("first line of thread %d\n", threadID);
 					for(int line_y=starty; line_y <= endy; line_y++){
 						for(int i=0; i<imageIn->x; i++){
 							line_buffer[i].blue+=imageIn->data[numberOfValuesInEachRow*line_y+i].blue;
